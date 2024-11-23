@@ -1,0 +1,107 @@
+/* Body Styling */
+body {
+    padding: 20px 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Subtle background color */
+}
+
+/* Main Container Styling */
+.container, .container-fluid {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+/* Responsive Max-Width for Large Screens */
+@media (min-width: 1200px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: 1800px;
+    }
+}
+
+/* Headings */
+h1, h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Table Input Fields */
+table td input {
+    width: auto;
+    max-width: 100%;
+    padding: 4px;
+    box-sizing: border-box; /* Maintain consistent width calculation */
+}
+
+/* Buttons */
+button {
+    font-size: 14px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #eef1f5;
+}
+
+/* Inline Messages */
+.inline-message {
+    text-align: center;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.inline-message.success {
+    color: green;
+}
+
+.inline-message.error {
+    color: red;
+}
+
+/* SOE Table Specific Styling */
+#soeDetails table#soeTable th:nth-child(5),
+#soeDetails table#soeTable th:nth-child(6),
+#soeDetails table#soeTable th:nth-child(7),
+#soeDetails table#soeTable th:nth-child(8),
+#soeDetails table#soeTable th:nth-child(9) {
+    width: 8em; /* Adjust column width */
+}
+
+#soeDetails table#soeTable td:nth-child(5) input,
+#soeDetails table#soeTable td:nth-child(6) input,
+#soeDetails table#soeTable td:nth-child(7) input,
+#soeDetails table#soeTable td:nth-child(8) input,
+#soeDetails table#soeTable td:nth-child(9) input {
+    width: 5em;
+    padding: 2px;
+    text-align: center;
+    box-sizing: border-box;
+}

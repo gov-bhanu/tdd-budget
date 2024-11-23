@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Viewer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Data Viewer</h1>
+    <!-- Inline messages for feedback -->
+    <div id="inlineMessage" class="alert" role="alert" style="display: none;"></div>
+
+    <!-- Export Button -->
+    <a href="/import_csv/" class="btn btn-primary mb-4">Import CSV</a>
+
+    <!-- Export Button -->
+    <button class="btn btn-success mb-4" onclick="exportToCSV()">Export to CSV</button>
+
+    <!-- Add Data Button -->
+    <a href="/add/" class="btn btn-primary mb-4">Add New Data</a>
+
+
+        <!-- Dropdown Filter Section -->
+        <div class="form-group row">
+            <label for="headNameDropdown" class="col-sm-2 col-form-label">Select Head Name:</label>
+            <div class="col-sm-10">
+                <select id="headNameDropdown" class="form-control" onchange="onHeadNameSelected()">
+                    <option value="">--Select Head Name--</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- SOE Details Section -->
+        <div id="soeDetails" class="mb-4" style="display: none;">
+            <h3 class="mb-3">SOE Details</h3>
+            <table id="soeTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Scheme Name</th>
+                        <th>SOEs Name</th>
+                        <th>Sanctioned Budget</th>
+                        <th>Revised Estimate</th>
+                        <th>Kinnaur</th>
+                        <th>Lahaul</th>
+                        <th>Spiti</th>
+                        <th>Pangi</th>
+                        <th>Bharmaur</th>  
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Data Table Section -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <table id="dataTable" class="table table-bordered table-striped table-hover w-100">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Department Code</th>
+                                <th>Department Name</th>
+                                <th>Head Name</th>
+                                <th>Scheme Name</th>
+                                <th>SOE Name</th>
+                                <th>Sanctioned Budget</th>
+                                <th>Revised Estimate</th>
+                                <th>Kinnaur</th>
+                                <th>Lahaul</th>
+                                <th>Spiti</th>
+                                <th>Pangi</th>
+                                <th>Bharmaur</th>                                          
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>

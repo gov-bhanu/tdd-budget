@@ -1,0 +1,25 @@
+body {
+    background-color: #f8f9fa; /* Subtle background */
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 800px; /* Centralize the form */
+}
+
+h1 {
+    color: #333; /* Neutral heading color */
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #555; /* Label text color */
+}
+
+button {
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+button:hover {
+    background-color: #0056b3; /* Bootstrap primary hover color */
+}

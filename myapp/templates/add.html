@@ -1,0 +1,111 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Data</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/add_data_styles.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Add New Data</h1>
+        <a href="/" class="btn btn-primary mb-4">Show All Data</a>
+        <form method="POST" action="" class="border p-4 bg-light shadow-sm rounded">
+            {% csrf_token %}
+            <!-- Row 1: Head Name & Head Type -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="head_name">Head Name:</label>
+                    <input type="text" id="head_name" name="head_name" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="head_type">Head Type:</label>
+                    <input type="text" id="head_type" name="head_type" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- Row 2: Department Name & Department Code -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="department_name">Department Name:</label>
+                    <input type="text" id="department_name" name="department_name" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="department_code">Department Code:</label>
+                    <input type="text" id="department_code" name="department_code" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- Row 3: Scheme Name & SOE Name -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="scheme_name">Scheme Name:</label>
+                    <input type="text" id="scheme_name" name="scheme_name" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="soes_name">SOEs Name:</label>
+                    <input type="text" id="soes_name" name="soes_name" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- Row 4: Sanctioned Budget & Revised Estimate -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="sanctioned_budget">Sanctioned Budget:</label>
+                    <input type="number" id="sanctioned_budget" name="sanctioned_budget" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="revised_estimate">Revised Estimate:</label>
+                    <input type="number" id="revised_estimate" name="revised_estimate" class="form-control">
+                </div>
+            </div>
+
+            <!-- Row 5: ITDP Name -->
+            <div class="form-group">
+                <label for="itdp_name">ITDP Name:</label>
+                <input type="text" id="itdp_name" name="itdp_name" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Add Data</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/add_data_script.js' %}"></script>
+</body>
+</html>
+
+
