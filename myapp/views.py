@@ -22,6 +22,7 @@ def update_revised_estimate(request):
             body = json.loads(request.body)
             unique_search = body.get('uniqueSearch')
             revised_estimate = body.get('revisedEstimate')
+            in_divisible = body.get('in_divisible')
             kinnaur = body.get('kinnaur')
             lahaul = body.get('lahaul')
             spiti = body.get('spiti')
@@ -35,6 +36,7 @@ def update_revised_estimate(request):
             row = DataRow.objects.filter(unique_search=unique_search).first()
             if row:
                 # Update the row with the new values
+                row.in_divisible = in_divisible
                 row.kinnaur = kinnaur
                 row.lahaul = lahaul
                 row.spiti = spiti
@@ -42,8 +44,8 @@ def update_revised_estimate(request):
                 row.bharmaur = bharmaur
 
                 # Set the revised estimate as the new sanctioned budget
-                row.sanctioned_budget = revised_estimate  # Updated to use revised estimate as sanctioned budget
-                row.revised_estimate = revised_estimate  # Ensure revised estimate is also saved
+                # row.sanctioned_budget = revised_estimate  # Updated to use revised estimate as sanctioned budget
+                row.revised_estimate = revised_estimate + in_divisible  # Ensure revised estimate is also saved
                 row.save()  # Save the updated row
 
                 return JsonResponse({'status': 'success', 'message': 'Revised estimate updated and sanctioned budget set.'})
@@ -53,7 +55,6 @@ def update_revised_estimate(request):
             return JsonResponse({'status': 'error', 'message': f'Error: {str(e)}'})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
-
 
 import csv
 from django.shortcuts import render, redirect
@@ -73,36 +74,40 @@ def import_csv(request):
             reader = csv.DictReader(decoded_file)
             
             for row in reader:
-                # Create or update the DataRow based on unique_search
                 department_code = row["department_code"]
                 department_name = row["department_name"]
                 head_name = row["head_name"]
                 scheme_name = row["scheme_name"]
                 soe_name = row["soe_name"]
                 sanctioned_budget = float(row["sanctioned_budget"])
-                kinnaur = float(row["kinnaur"]) if row["kinnaur"] else None
-                lahaul = float(row["lahaul"]) if row["lahaul"] else None
-                spiti = float(row["spiti"]) if row["spiti"] else None
-                pangi = float(row["pangi"]) if row["pangi"] else None
-                bharmaur = float(row["bharmaur"]) if row["bharmaur"] else None
+                in_divisible = float(row["in_divisible"]) if row.get("in_divisible") else None
+                kinnaur = float(row["kinnaur"]) if row.get("kinnaur") else None
+                lahaul = float(row["lahaul"]) if row.get("lahaul") else None
+                spiti = float(row["spiti"]) if row.get("spiti") else None
+                pangi = float(row["pangi"]) if row.get("pangi") else None
+                bharmaur = float(row["bharmaur"]) if row.get("bharmaur") else None
 
-                # Create or update the DataRow
-                data, created = DataRow.objects.update_or_create(
-                    unique_search=f"{department_code}-{department_name}-{scheme_name}-{head_name}-{soe_name}",
-                    defaults={
-                        "department_code": department_code,
-                        "department_name": department_name,
-                        "head_name": head_name,
-                        "scheme_name": scheme_name,
-                        "soe_name": soe_name,
-                        "sanctioned_budget": sanctioned_budget,
-                        "kinnaur": kinnaur,
-                        "lahaul": lahaul,
-                        "spiti": spiti,
-                        "pangi": pangi,
-                        "bharmaur": bharmaur,
-                    },
-                )
+                try:
+                    # Create or update the DataRow
+                    data, created = DataRow.objects.update_or_create(
+                        unique_search=f"{department_code}-{department_name}-{scheme_name}-{head_name}-{soe_name}",
+                        defaults={
+                            "department_code": department_code,
+                            "department_name": department_name,
+                            "head_name": head_name,
+                            "scheme_name": scheme_name,
+                            "soe_name": soe_name,
+                            "sanctioned_budget": sanctioned_budget,
+                            "in_divisible": in_divisible,
+                            "kinnaur": kinnaur,
+                            "lahaul": lahaul,
+                            "spiti": spiti,
+                            "pangi": pangi,
+                            "bharmaur": bharmaur,
+                        },
+                    )
+                except Exception as e:
+                    messages.error(request, f"Row error: {row}. Error: {str(e)}")
             
             messages.success(request, "CSV file imported successfully!")
             return redirect("/")
@@ -112,6 +117,7 @@ def import_csv(request):
             return redirect("import_csv")
 
     return render(request, "import.html")
+
 
 
 def add_data(request):

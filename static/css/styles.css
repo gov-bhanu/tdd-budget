@@ -1,5 +1,6 @@
 /* Body Styling */
 body {
+    font-size: 14px; /* Reduced overall font size */
     padding: 20px 0;
     font-family: Arial, sans-serif;
     background-color: #f8f9fa; /* Subtle background color */
@@ -22,7 +23,15 @@ body {
 }
 
 /* Headings */
-h1, h2 {
+h1 {
+    font-size: 24px; /* Reduced font size */
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+h2 {
+    font-size: 18px; /* Reduced font size */
     text-align: center;
     margin-bottom: 20px;
     color: #333;
@@ -36,6 +45,7 @@ table {
 }
 
 table th, table td {
+    font-size: 12px; /* Reduced table font size */
     text-align: center;
     padding: 8px;
     border: 1px solid #ddd;
@@ -54,6 +64,7 @@ table tr:nth-child(even) {
 
 /* Table Input Fields */
 table td input {
+    font-size: 12px; /* Reduced font size for input fields */
     width: auto;
     max-width: 100%;
     padding: 4px;
@@ -61,13 +72,13 @@ table td input {
 }
 
 /* Buttons */
-button {
-    font-size: 14px;
-    padding: 5px 10px;
+.btn {
+    font-size: 12px; /* Reduced button font size */
+    padding: 6px 12px; /* Adjusted padding */
     cursor: pointer;
 }
 
-button:hover {
+.btn:hover {
     background-color: #eef1f5;
 }
 
@@ -87,21 +98,64 @@ button:hover {
 }
 
 /* SOE Table Specific Styling */
-#soeDetails table#soeTable th:nth-child(5),
-#soeDetails table#soeTable th:nth-child(6),
-#soeDetails table#soeTable th:nth-child(7),
-#soeDetails table#soeTable th:nth-child(8),
-#soeDetails table#soeTable th:nth-child(9) {
+/* SOE Table Specific Styling */
+/* #soeDetails table#soeTable th:nth-child(5), Revised Estimate */
+#soeDetails table#soeTable th:nth-child(6), /* Kinnaur */
+#soeDetails table#soeTable th:nth-child(7), /* Lahaul */
+#soeDetails table#soeTable th:nth-child(8), /* Spiti */
+#soeDetails table#soeTable th:nth-child(9), /* Pangi */
+#soeDetails table#soeTable th:nth-child(10) { /* Bharmaur */
     width: 8em; /* Adjust column width */
 }
 
-#soeDetails table#soeTable td:nth-child(5) input,
-#soeDetails table#soeTable td:nth-child(6) input,
-#soeDetails table#soeTable td:nth-child(7) input,
-#soeDetails table#soeTable td:nth-child(8) input,
-#soeDetails table#soeTable td:nth-child(9) input {
+/* Add specific styling for "In Divisible" column */
+#soeDetails table#soeTable th:nth-child(5), /* In Divisible */
+#soeDetails table#soeTable td:nth-child(5) input { /* In Divisible inputs */
+    width: 6em; /* Adjust as needed for input size */
+    padding: 2px;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+/* Style the other input fields */
+#soeDetails table#soeTable td:nth-child(4) input, /* Revised Estimate */
+#soeDetails table#soeTable td:nth-child(6) input, /* Kinnaur */
+#soeDetails table#soeTable td:nth-child(7) input, /* Lahaul */
+#soeDetails table#soeTable td:nth-child(8) input, /* Spiti */
+#soeDetails table#soeTable td:nth-child(9) input, /* Pangi */
+#soeDetails table#soeTable td:nth-child(10) input { /* Bharmaur */
     width: 5em;
     padding: 2px;
-    text-align: center;
+    font-size: 12px; /* Reduced font size */
     box-sizing: border-box;
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    body {
+        font-size: 12px; /* Further reduce font size for smaller devices */
+    }
+
+    .btn {
+        font-size: 10px; /* Smaller buttons on small screens */
+        padding: 4px 8px;
+    }
+
+    table th, table td {
+        font-size: 10px; /* Smaller table content */
+    }
+}
+
+table th, 
+table td {
+    text-align: center; /* Horizontal alignment: center */
+    vertical-align: middle; /* Vertical alignment: middle */
+}
+
+/* Specific Styling for SOE Table */
+#soeDetails table#soeTable th,
+#soeDetails table#soeTable td {
+    text-align: center; /* Center align text in SOE table */
+    vertical-align: middle; /* Middle align content vertically */
 }

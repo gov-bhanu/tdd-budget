@@ -35,6 +35,7 @@ function populateMainTable() {
             <td>${row.soe_name}</td>
             <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
             <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
+            <td>${row.in_divisible}</td>
             <td>${(row.kinnaur || 0).toFixed(2)}</td>
             <td>${(row.lahaul || 0).toFixed(2)}</td>
             <td>${(row.spiti || 0).toFixed(2)}</td>
@@ -79,6 +80,7 @@ function populateSOETable(filteredData) {
         // Generate uniqueSearch based on the updated model logic
         const uniqueSearch = `${row.department_code}-${row.department_name}-${row.scheme_name}-${row.head_name}-${row.soe_name}`;
 
+        const in_divisible = (row.in_divisible || 0).toFixed(2);
         const kinnaur = (row.kinnaur || 0).toFixed(2);
         const lahaul = (row.lahaul || 0).toFixed(2);
         const spiti = (row.spiti || 0).toFixed(2);
@@ -86,7 +88,7 @@ function populateSOETable(filteredData) {
         const bharmaur = (row.bharmaur || 0).toFixed(2);
 
         // Sum up the values for revisedEstimate
-        const revisedEstimate = (parseFloat(kinnaur) + parseFloat(lahaul) + parseFloat(spiti) + parseFloat(pangi) + parseFloat(bharmaur)).toFixed(2);
+        const revisedEstimate = (parseFloat(in_divisible) + parseFloat(kinnaur) + parseFloat(lahaul) + parseFloat(spiti) + parseFloat(pangi) + parseFloat(bharmaur)).toFixed(2);
 
         // Add a row with input fields for editing
         const newRow = soeTable.insertRow();
@@ -95,6 +97,7 @@ function populateSOETable(filteredData) {
         <td>${row.soe_name}</td>
         <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
         <td>${revisedEstimate}</td>
+        <td><input type="number" value="${in_divisible}" class="expandable-input" /></td>
         <td><input type="number" value="${kinnaur}" class="expandable-input" /></td>
         <td><input type="number" value="${lahaul}" class="expandable-input" /></td>
         <td><input type="number" value="${spiti}" class="expandable-input" /></td>
@@ -112,6 +115,7 @@ function populateSOETable(filteredData) {
 // Update Revised Estimate for a single SOE
 function updateRevisedEstimate(uniqueSearch, button) {
     const row = button.parentElement.parentElement; // Get the row that contains the data
+    const in_divisible = parseFloat(row.cells[4].querySelector('input').value) || 0;
     const kinnaur = parseFloat(row.cells[4].querySelector('input').value) || 0;
     const lahaul = parseFloat(row.cells[5].querySelector('input').value) || 0;
     const spiti = parseFloat(row.cells[6].querySelector('input').value) || 0;
@@ -119,7 +123,7 @@ function updateRevisedEstimate(uniqueSearch, button) {
     const bharmaur = parseFloat(row.cells[8].querySelector('input').value) || 0;
 
     // Calculate the revised estimate
-    const revisedEstimate = kinnaur + lahaul + spiti + pangi + bharmaur;
+    const revisedEstimate = in_divisible + kinnaur + lahaul + spiti + pangi + bharmaur;
 
     // Make the API call to update the revised estimate in the backend
     fetch('/update-revised-estimate/', {
@@ -128,6 +132,7 @@ function updateRevisedEstimate(uniqueSearch, button) {
         body: JSON.stringify({
             uniqueSearch,  // Send the unique search key
             revisedEstimate,  // Send the updated revised estimate value
+            in_divisible,
             kinnaur,
             lahaul,
             spiti,
@@ -176,25 +181,7 @@ function updateSOEDetailsTable(revisedEstimate) {
 }
 
 
-function reUpdatedSB(uniqueSearch, revisedEstimate) {
-    // Update the main table
-    const mainTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
-    const mainRows = mainTable.getElementsByTagName('tr');
-
-    for (let row of mainRows) {
-        const departmentCode = row.cells[0].textContent.trim();
-        const departmentName = row.cells[1].textContent.trim();
-        const schemeName = row.cells[3].textContent.trim();
-        const headName = row.cells[2].textContent.trim();
-        const soeName = row.cells[4].textContent.trim();
-
-        const rowUniqueSearch = `${departmentCode}-${departmentName}-${schemeName}-${headName}-${soeName}`;
-        if (rowUniqueSearch === uniqueSearch) {
-            // Update the Sanctioned Budget cell with the Revised Estimate value
-            row.cells[5].textContent = revisedEstimate.toFixed(2); // Assuming the "Sanctioned Budget" is in column index 5
-            break;
-        }
-    }
+function reUpdatedSB(uniqueSearch,) {
 
     // Update the SOE Details table
     const soeTable = document.getElementById('soeTable').getElementsByTagName('tbody')[0];
@@ -206,8 +193,7 @@ function reUpdatedSB(uniqueSearch, revisedEstimate) {
 
         // Match the uniqueSearch for the row
         if (uniqueSearch.includes(schemeName) && uniqueSearch.includes(soeName)) {
-            // Update the Sanctioned Budget cell with the Revised Estimate value
-            row.cells[2].textContent = revisedEstimate.toFixed(2); // Assuming the "Sanctioned Budget" is in column index 2
+
             break;
         }
     }

@@ -9,6 +9,7 @@ class DataRow(models.Model):
     scheme_name = models.CharField(max_length=100)
     soe_name = models.CharField(max_length=100)
     sanctioned_budget = models.FloatField()
+    in_divisible = models.FloatField(null=True, blank=True)
     revised_estimate = models.FloatField(null=True, blank=True)
     kinnaur = models.FloatField(null=True, blank=True)
     lahaul = models.FloatField(null=True, blank=True)
@@ -29,11 +30,11 @@ class DataRow(models.Model):
 
     def save(self, *args, **kwargs):
         # Auto-calculate revised_estimate
-        self.revised_estimate = sum(filter(None, [self.kinnaur, self.lahaul, self.spiti, self.pangi, self.bharmaur]))
-        
+        self.revised_estimate = sum(filter(None, [self.in_divisible, self.kinnaur, self.lahaul, self.spiti, self.pangi, self.bharmaur]))
+
         # Auto-generate unique_search field
         self.unique_search = f"{self.department_code}-{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
-        
+
         # Call full_clean for validation
         self.full_clean()
 
@@ -48,19 +49,7 @@ class DataRow(models.Model):
         # Ensure head_name is tied to the same department_name
         existing_head = DataRow.objects.filter(head_name=self.head_name).exclude(id=self.id)
         if existing_head.exists() and existing_head.first().department_name != self.department_name:
-            raise ValidationError("The head_name is already assigned to a different department_name.")
-        
-        # Ensure scheme_name is tied to a specific head_name
-        existing_scheme = DataRow.objects.filter(scheme_name=self.scheme_name).exclude(id=self.id)
-        if existing_scheme.exists():
-            if existing_scheme.first().head_name != self.head_name:
-                raise ValidationError(f"The scheme_name '{self.scheme_name}' is already assigned to a different head_name.")
-            
-        # Ensure head_name is tied to a specific scheme_name
-        existing_head = DataRow.objects.filter(head_name=self.head_name).exclude(id=self.id)
-        if existing_head.exists():
-            if existing_head.first().scheme_name != self.scheme_name:
-                raise ValidationError(f"The head_name '{self.head_name}' is already assigned to a different scheme_name.")
+            raise ValidationError(f"The Head Name '{self.head_name}' is already assigned to a different Department Name: '{self.department_name}'.")
         
         super().clean()
 
