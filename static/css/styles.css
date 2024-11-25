@@ -100,11 +100,11 @@ table td input {
 /* SOE Table Specific Styling */
 /* SOE Table Specific Styling */
 /* #soeDetails table#soeTable th:nth-child(5), Revised Estimate */
-#soeDetails table#soeTable th:nth-child(6), /* Kinnaur */
-#soeDetails table#soeTable th:nth-child(7), /* Lahaul */
-#soeDetails table#soeTable th:nth-child(8), /* Spiti */
-#soeDetails table#soeTable th:nth-child(9), /* Pangi */
-#soeDetails table#soeTable th:nth-child(10) { /* Bharmaur */
+#soeDetails table#soeTable th:nth-child(7), /* Kinnaur */
+#soeDetails table#soeTable th:nth-child(8), /* Lahaul */
+#soeDetails table#soeTable th:nth-child(9), /* Spiti */
+#soeDetails table#soeTable th:nth-child(10), /* Pangi */
+#soeDetails table#soeTable th:nth-child(11) { /* Bharmaur */
     width: 8em; /* Adjust column width */
 }
 
@@ -118,12 +118,12 @@ table td input {
 }
 
 /* Style the other input fields */
-#soeDetails table#soeTable td:nth-child(4) input, /* Revised Estimate */
-#soeDetails table#soeTable td:nth-child(6) input, /* Kinnaur */
-#soeDetails table#soeTable td:nth-child(7) input, /* Lahaul */
-#soeDetails table#soeTable td:nth-child(8) input, /* Spiti */
-#soeDetails table#soeTable td:nth-child(9) input, /* Pangi */
-#soeDetails table#soeTable td:nth-child(10) input { /* Bharmaur */
+#soeDetails table#soeTable td:nth-child(5) input, /* Revised Estimate */
+#soeDetails table#soeTable td:nth-child(7) input, /* Kinnaur */
+#soeDetails table#soeTable td:nth-child(8) input, /* Lahaul */
+#soeDetails table#soeTable td:nth-child(9) input, /* Spiti */
+#soeDetails table#soeTable td:nth-child(10) input, /* Pangi */
+#soeDetails table#soeTable td:nth-child(11) input { /* Bharmaur */
     width: 5em;
     padding: 2px;
     font-size: 12px; /* Reduced font size */

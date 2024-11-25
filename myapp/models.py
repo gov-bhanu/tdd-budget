@@ -9,8 +9,9 @@ class DataRow(models.Model):
     scheme_name = models.CharField(max_length=100)
     soe_name = models.CharField(max_length=100)
     sanctioned_budget = models.FloatField()
-    in_divisible = models.FloatField(null=True, blank=True)
     revised_estimate = models.FloatField(null=True, blank=True)
+    in_divisible = models.FloatField(null=True, blank=True)
+    divisible = models.FloatField(null=True, blank=True)
     kinnaur = models.FloatField(null=True, blank=True)
     lahaul = models.FloatField(null=True, blank=True)
     spiti = models.FloatField(null=True, blank=True)
@@ -30,7 +31,8 @@ class DataRow(models.Model):
 
     def save(self, *args, **kwargs):
         # Auto-calculate revised_estimate
-        self.revised_estimate = sum(filter(None, [self.in_divisible, self.kinnaur, self.lahaul, self.spiti, self.pangi, self.bharmaur]))
+        self.divisible = sum(filter(None, [self.kinnaur, self.lahaul, self.spiti, self.pangi, self.bharmaur]))
+        self.revised_estimate = sum(filter(None, [self.in_divisible, self.divisible]))
 
         # Auto-generate unique_search field
         self.unique_search = f"{self.department_code}-{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"

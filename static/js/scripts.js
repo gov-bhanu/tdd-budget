@@ -36,6 +36,7 @@ function populateMainTable() {
             <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
             <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
             <td>${parseFloat(row.in_divisible).toFixed(2)}</td>
+            <td>${(row.divisible || 0).toFixed(2)}</td>
             <td>${(row.kinnaur || 0).toFixed(2)}</td>
             <td>${(row.lahaul || 0).toFixed(2)}</td>
             <td>${(row.spiti || 0).toFixed(2)}</td>
@@ -88,8 +89,9 @@ function populateSOETable(filteredData) {
         const bharmaur = (row.bharmaur || 0).toFixed(2);
 
         // Sum up the values for revisedEstimate
-        const revisedEstimate = (parseFloat(in_divisible) + parseFloat(kinnaur) + parseFloat(lahaul) + parseFloat(spiti) + parseFloat(pangi) + parseFloat(bharmaur)).toFixed(2);
-
+        const divisible = (parseFloat(kinnaur) + parseFloat(lahaul) + parseFloat(spiti) + parseFloat(pangi) + parseFloat(bharmaur)).toFixed(2);
+        const revisedEstimate = (parseFloat(in_divisible) + parseFloat(divisible)).toFixed(2);
+        
         // Add a row with input fields for editing
         const newRow = soeTable.insertRow();
         newRow.innerHTML = `
@@ -98,6 +100,7 @@ function populateSOETable(filteredData) {
         <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
         <td>${revisedEstimate}</td>
         <td><input type="number" value="${in_divisible}" class="expandable-input" /></td>
+        <td>${divisible}</td>
         <td><input type="number" value="${kinnaur}" class="expandable-input" /></td>
         <td><input type="number" value="${lahaul}" class="expandable-input" /></td>
         <td><input type="number" value="${spiti}" class="expandable-input" /></td>
@@ -116,14 +119,15 @@ function populateSOETable(filteredData) {
 function updateRevisedEstimate(uniqueSearch, button) {
     const row = button.parentElement.parentElement; // Get the row that contains the data
     const in_divisible = parseFloat(row.cells[4].querySelector('input').value) || 0;
-    const kinnaur = parseFloat(row.cells[5].querySelector('input').value) || 0;
-    const lahaul = parseFloat(row.cells[6].querySelector('input').value) || 0;
-    const spiti = parseFloat(row.cells[7].querySelector('input').value) || 0;
-    const pangi = parseFloat(row.cells[8].querySelector('input').value) || 0;
-    const bharmaur = parseFloat(row.cells[9].querySelector('input').value) || 0;
+    const kinnaur = parseFloat(row.cells[6].querySelector('input').value) || 0;
+    const lahaul = parseFloat(row.cells[7].querySelector('input').value) || 0;
+    const spiti = parseFloat(row.cells[8].querySelector('input').value) || 0;
+    const pangi = parseFloat(row.cells[9].querySelector('input').value) || 0;
+    const bharmaur = parseFloat(row.cells[10].querySelector('input').value) || 0;
 
-    // Calculate the revised estimate
-    const revisedEstimate = in_divisible + kinnaur + lahaul + spiti + pangi + bharmaur;
+    // Calculate
+    const divisible = kinnaur + lahaul + spiti + pangi + bharmaur
+    const revisedEstimate = in_divisible + divisible
 
     // Make the API call to update the revised estimate in the backend
     fetch('/update-revised-estimate/', {
@@ -133,6 +137,7 @@ function updateRevisedEstimate(uniqueSearch, button) {
             uniqueSearch,  // Send the unique search key
             revisedEstimate,  // Send the updated revised estimate value
             in_divisible,
+            divisible,
             kinnaur,
             lahaul,
             spiti,
@@ -151,8 +156,10 @@ function updateRevisedEstimate(uniqueSearch, button) {
             // Update the Revised Estimate cell in the SOE Details table
             row.cells[3].textContent = revisedEstimate.toFixed(2);
 
-            // Call reUpdatedSB to update the Sanctioned Budget in both tables
-            reUpdatedSB(uniqueSearch, revisedEstimate);
+            // Update the Divisible cell in the SOE Details table
+            row.cells[5].textContent = divisible.toFixed(2);
+
+
             fetchData();
         } else {
             inlineMessage.textContent = 'Error updating: ' + data.message;
@@ -166,39 +173,6 @@ function updateRevisedEstimate(uniqueSearch, button) {
         inlineMessage.style.color = 'red'; // Error message style
     });
 }
-
-
-
-
-function updateSOEDetailsTable(revisedEstimate) {
-    // Get all rows in the SOE Details table and update their revised estimate value
-    const soeTableRows = document.querySelectorAll('#soeDetailsTableBody tr');
-
-    soeTableRows.forEach(row => {
-        const revisedEstimateCell = row.cells[6]; // Assuming revised estimate is in the 7th column (index 6)
-        revisedEstimateCell.textContent = revisedEstimate.toFixed(2); // Update with the latest revised estimate
-    });
-}
-
-
-function reUpdatedSB(uniqueSearch,) {
-
-    // Update the SOE Details table
-    const soeTable = document.getElementById('soeTable').getElementsByTagName('tbody')[0];
-    const soeRows = soeTable.getElementsByTagName('tr');
-
-    for (let row of soeRows) {
-        const schemeName = row.cells[0].textContent.trim();
-        const soeName = row.cells[1].textContent.trim();
-
-        // Match the uniqueSearch for the row
-        if (uniqueSearch.includes(schemeName) && uniqueSearch.includes(soeName)) {
-
-            break;
-        }
-    }
-}
-
 
 
 // CSRF Token Helper

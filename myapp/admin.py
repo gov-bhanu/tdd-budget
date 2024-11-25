@@ -13,6 +13,7 @@ class DataRowAdmin(admin.ModelAdmin):
         'sanctioned_budget',
         'revised_estimate_display',  # Use a custom method for displaying revised_estimate
         'in_divisible',
+        'divisible',
         'kinnaur',
         'lahaul',
         'spiti',

@@ -22,7 +22,8 @@ def update_revised_estimate(request):
             body = json.loads(request.body)
             unique_search = body.get('uniqueSearch')
             revised_estimate = body.get('revisedEstimate')
-            in_divisible = body.get('in_divisible')
+            in_divisible = body.get('in_divisible')            
+            divisible = body.get('divisible')
             kinnaur = body.get('kinnaur')
             lahaul = body.get('lahaul')
             spiti = body.get('spiti')
@@ -37,15 +38,15 @@ def update_revised_estimate(request):
             if row:
                 # Update the row with the new values
                 row.in_divisible = in_divisible
+                row.divisible = divisible
                 row.kinnaur = kinnaur
                 row.lahaul = lahaul
                 row.spiti = spiti
                 row.pangi = pangi
                 row.bharmaur = bharmaur
 
-                # Set the revised estimate as the new sanctioned budget
-                # row.sanctioned_budget = revised_estimate  # Updated to use revised estimate as sanctioned budget
-                row.revised_estimate = revised_estimate + in_divisible  # Ensure revised estimate is also saved
+                # revised estimate = in_divisible + divisible
+                row.revised_estimate = in_divisible + divisible  # Ensure revised estimate is also saved
                 row.save()  # Save the updated row
 
                 return JsonResponse({'status': 'success', 'message': 'Revised estimate updated and sanctioned budget set.'})
