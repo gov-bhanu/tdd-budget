@@ -35,7 +35,7 @@ function populateMainTable() {
             <td>${row.soe_name}</td>
             <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
             <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
-            <td>${row.in_divisible}</td>
+            <td>${parseFloat(row.in_divisible).toFixed(2)}</td>
             <td>${(row.kinnaur || 0).toFixed(2)}</td>
             <td>${(row.lahaul || 0).toFixed(2)}</td>
             <td>${(row.spiti || 0).toFixed(2)}</td>
@@ -116,11 +116,11 @@ function populateSOETable(filteredData) {
 function updateRevisedEstimate(uniqueSearch, button) {
     const row = button.parentElement.parentElement; // Get the row that contains the data
     const in_divisible = parseFloat(row.cells[4].querySelector('input').value) || 0;
-    const kinnaur = parseFloat(row.cells[4].querySelector('input').value) || 0;
-    const lahaul = parseFloat(row.cells[5].querySelector('input').value) || 0;
-    const spiti = parseFloat(row.cells[6].querySelector('input').value) || 0;
-    const pangi = parseFloat(row.cells[7].querySelector('input').value) || 0;
-    const bharmaur = parseFloat(row.cells[8].querySelector('input').value) || 0;
+    const kinnaur = parseFloat(row.cells[5].querySelector('input').value) || 0;
+    const lahaul = parseFloat(row.cells[6].querySelector('input').value) || 0;
+    const spiti = parseFloat(row.cells[7].querySelector('input').value) || 0;
+    const pangi = parseFloat(row.cells[8].querySelector('input').value) || 0;
+    const bharmaur = parseFloat(row.cells[9].querySelector('input').value) || 0;
 
     // Calculate the revised estimate
     const revisedEstimate = in_divisible + kinnaur + lahaul + spiti + pangi + bharmaur;

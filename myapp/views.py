@@ -80,7 +80,8 @@ def import_csv(request):
                 scheme_name = row["scheme_name"]
                 soe_name = row["soe_name"]
                 sanctioned_budget = float(row["sanctioned_budget"])
-                in_divisible = float(row["in_divisible"]) if row.get("in_divisible") else None
+                in_divisible = float(row["in_divisible"]) if row.get("in_divisible") else None                
+                revised_estimate = float(row["in_divisible"]) if row.get("in_divisible") else None
                 kinnaur = float(row["kinnaur"]) if row.get("kinnaur") else None
                 lahaul = float(row["lahaul"]) if row.get("lahaul") else None
                 spiti = float(row["spiti"]) if row.get("spiti") else None
@@ -99,6 +100,7 @@ def import_csv(request):
                             "soe_name": soe_name,
                             "sanctioned_budget": sanctioned_budget,
                             "in_divisible": in_divisible,
+                            "revised_estimate": revised_estimate,
                             "kinnaur": kinnaur,
                             "lahaul": lahaul,
                             "spiti": spiti,
