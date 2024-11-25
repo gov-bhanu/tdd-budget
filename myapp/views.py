@@ -75,14 +75,15 @@ def import_csv(request):
             reader = csv.DictReader(decoded_file)
             
             for row in reader:
-                department_code = row["department_code"]
+                # department_code = row["department_code"]
                 department_name = row["department_name"]
                 head_name = row["head_name"]
                 scheme_name = row["scheme_name"]
                 soe_name = row["soe_name"]
                 sanctioned_budget = float(row["sanctioned_budget"])
-                in_divisible = float(row["in_divisible"]) if row.get("in_divisible") else None                
                 revised_estimate = float(row["in_divisible"]) if row.get("in_divisible") else None
+                in_divisible = float(row["in_divisible"]) if row.get("in_divisible") else None                
+                divisible = float(row["in_divisible"]) if row.get("divisible") else None
                 kinnaur = float(row["kinnaur"]) if row.get("kinnaur") else None
                 lahaul = float(row["lahaul"]) if row.get("lahaul") else None
                 spiti = float(row["spiti"]) if row.get("spiti") else None
@@ -92,16 +93,18 @@ def import_csv(request):
                 try:
                     # Create or update the DataRow
                     data, created = DataRow.objects.update_or_create(
-                        unique_search=f"{department_code}-{department_name}-{scheme_name}-{head_name}-{soe_name}",
+                        # unique_search=f"{department_code}-{department_name}-{scheme_name}-{head_name}-{soe_name}",
+                        unique_search=f"{department_name}-{scheme_name}-{head_name}-{soe_name}",
                         defaults={
-                            "department_code": department_code,
+                            # "department_code": department_code,
                             "department_name": department_name,
                             "head_name": head_name,
                             "scheme_name": scheme_name,
                             "soe_name": soe_name,
                             "sanctioned_budget": sanctioned_budget,
-                            "in_divisible": in_divisible,
                             "revised_estimate": revised_estimate,
+                            "in_divisible": in_divisible,
+                            "divisible": divisible,
                             "kinnaur": kinnaur,
                             "lahaul": lahaul,
                             "spiti": spiti,
@@ -133,7 +136,7 @@ def add_data(request):
         soe_name = request.POST.get('soe_name')
         sanctioned_budget = request.POST.get('sanctioned_budget')
         revised_estimate = request.POST.get('revised_estimate')
-        department_code = request.POST.get('department_code')
+        # department_code = request.POST.get('department_code')
         department_name = request.POST.get('department_name')
         scheme_name = request.POST.get('scheme_name')
 
@@ -145,7 +148,7 @@ def add_data(request):
             soe_name=soe_name,
             sanctioned_budget=sanctioned_budget,
             revised_estimate=revised_estimate,
-            department_code=department_code,
+            # department_code=department_code,
             department_name=department_name,
             scheme_name=scheme_name
         )

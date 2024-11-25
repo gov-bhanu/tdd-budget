@@ -1,7 +1,7 @@
 /* Body Styling */
 body {
     font-size: 14px; /* Reduced overall font size */
-    padding: 20px 0;
+    padding: 10px 0;
     font-family: Arial, sans-serif;
     background-color: #f8f9fa; /* Subtle background color */
 }
@@ -9,7 +9,7 @@ body {
 /* Main Container Styling */
 .container, .container-fluid {
     background: white;
-    padding: 20px;
+    padding: 10px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
@@ -18,7 +18,7 @@ body {
 /* Responsive Max-Width for Large Screens */
 @media (min-width: 1200px) {
     .container, .container-lg, .container-md, .container-sm, .container-xl {
-        max-width: 1800px;
+        max-width: 2000px;
     }
 }
 

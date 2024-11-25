@@ -21,6 +21,32 @@ function fetchData() {
         });
 }
 
+// // Populate the main data table
+// function populateMainTable() {
+//     const dataTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+//     dataTable.innerHTML = ''; // Clear previous table content
+//     allData.forEach(row => {
+//         const newRow = dataTable.insertRow();
+//         newRow.innerHTML = `
+//             <td>${row.department_code}</td>
+//             <td>${row.department_name}</td>
+//             <td>${row.head_name}</td>
+//             <td>${row.scheme_name}</td>
+//             <td>${row.soe_name}</td>
+//             <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
+//             <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
+//             <td>${parseFloat(row.in_divisible).toFixed(2)}</td>
+//             <td>${(row.divisible || 0).toFixed(2)}</td>
+//             <td>${(row.kinnaur || 0).toFixed(2)}</td>
+//             <td>${(row.lahaul || 0).toFixed(2)}</td>
+//             <td>${(row.spiti || 0).toFixed(2)}</td>
+//             <td>${(row.pangi || 0).toFixed(2)}</td>
+//             <td>${(row.bharmaur || 0).toFixed(2)}</td>
+//         `;
+//     });
+// }
+
+
 // Populate the main data table
 function populateMainTable() {
     const dataTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
@@ -28,7 +54,6 @@ function populateMainTable() {
     allData.forEach(row => {
         const newRow = dataTable.insertRow();
         newRow.innerHTML = `
-            <td>${row.department_code}</td>
             <td>${row.department_name}</td>
             <td>${row.head_name}</td>
             <td>${row.scheme_name}</td>
@@ -45,6 +70,8 @@ function populateMainTable() {
         `;
     });
 }
+
+
 
 // Populate the Head Name dropdown
 function populateHeadNameDropdown() {
@@ -79,7 +106,8 @@ function populateSOETable(filteredData) {
 
     filteredData.forEach((row, index) => {
         // Generate uniqueSearch based on the updated model logic
-        const uniqueSearch = `${row.department_code}-${row.department_name}-${row.scheme_name}-${row.head_name}-${row.soe_name}`;
+        // const uniqueSearch = `${row.department_code}-${row.department_name}-${row.scheme_name}-${row.head_name}-${row.soe_name}`;
+        const uniqueSearch = `${row.department_name}-${row.scheme_name}-${row.head_name}-${row.soe_name}`;
 
         const in_divisible = (row.in_divisible || 0).toFixed(2);
         const kinnaur = (row.kinnaur || 0).toFixed(2);

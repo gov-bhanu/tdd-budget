@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 
 
 class DataRow(models.Model):
-    department_code = models.CharField(max_length=100)
+    # department_code = models.CharField(max_length=100)
     department_name = models.CharField(max_length=100)
     head_name = models.CharField(max_length=100)
     scheme_name = models.CharField(max_length=100)
@@ -35,7 +35,8 @@ class DataRow(models.Model):
         self.revised_estimate = sum(filter(None, [self.in_divisible, self.divisible]))
 
         # Auto-generate unique_search field
-        self.unique_search = f"{self.department_code}-{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
+        # self.unique_search = f"{self.department_code}-{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
+        self.unique_search = f"{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
 
         # Call full_clean for validation
         self.full_clean()
@@ -43,10 +44,10 @@ class DataRow(models.Model):
         super().save(*args, **kwargs)
 
     def clean(self):
-        # Ensure department_code is tied to the same department_name across rows
-        existing = DataRow.objects.filter(department_code=self.department_code).exclude(id=self.id)
-        if existing.exists() and existing.first().department_name != self.department_name:
-            raise ValidationError("The department_code is already assigned to a different department_name.")
+        # # Ensure department_code is tied to the same department_name across rows
+        # existing = DataRow.objects.filter(department_code=self.department_code).exclude(id=self.id)
+        # if existing.exists() and existing.first().department_name != self.department_name:
+        #     raise ValidationError("The department_code is already assigned to a different department_name.")
         
         # Ensure head_name is tied to the same department_name
         existing_head = DataRow.objects.filter(head_name=self.head_name).exclude(id=self.id)

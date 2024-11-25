@@ -5,7 +5,7 @@ from .models import DataRow
 class DataRowAdmin(admin.ModelAdmin):
     list_display = (
         'unique_search',
-        'department_code',
+        # 'department_code',
         'department_name',
         'head_name',
         'scheme_name',
