@@ -10,23 +10,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
 </head>
 <body>
-    <button onclick="exportToExcel()" class="btn btn-success mb-3">Export to Excel</button>
     <div class="container mt-4">
         <h1 class="text-center mb-4">Department-wise Supplementary Report</h1>
         <div class="table-responsive">
-            <table id="supplementary_table" class="table table-bordered table-striped table-hover">
+            <table id="supplementaryReportTable" class="table table-bordered table-striped table-hover">
                 <thead class="thead-dark">
                     <tr>
                         <th>Department Name</th>
-                        <th>Scheme Name</th>
                         <th>Head Name</th>
+                        <th>Scheme Name</th>
                         <th>SOE Name</th>
-                        <th>Sanctioned Budget</th>
-                        <th>Revised Estimate</th>
+                        <th>Sanctioned Budget (SB)</th>
+                        <th>Revised Estimate (RE)</th>
                         <th>Excess</th>
                         <th>Surrender</th>
                         <th>Variation</th>
-                        <th>Agreed by FD</th>
                     </tr>
                 </thead>
                 <tbody>
