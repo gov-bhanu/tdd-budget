@@ -1,9 +1,15 @@
-from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
-from .models import DataRow
 from django.contrib import messages
+from collections import defaultdict
+from .models import DataRow
+from django.db.models import Sum
+import json
+import csv
+from django.core.serializers import serialize
+
+
 
 def index(request):
     """Render the main page."""
@@ -13,6 +19,14 @@ def fetch_data(request):
     """Fetch all data to populate the table."""
     data = list(DataRow.objects.values())
     return JsonResponse({'status': 'success', 'data': data})
+
+
+
+
+
+
+
+
 
 @csrf_exempt
 def update_revised_estimate(request):
@@ -57,10 +71,19 @@ def update_revised_estimate(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
-import csv
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import DataRow
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def import_csv(request):
     if request.method == "POST":
@@ -126,6 +149,13 @@ def import_csv(request):
 
 
 
+
+
+
+
+
+
+
 def add_data(request):
     """Render the add form and handle new data submission."""
     if request.method == 'POST':
@@ -158,3 +188,85 @@ def add_data(request):
         return redirect('index')
 
     return render(request, 'add.html')  # Render the add form
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# View to render the final_report page
+def final_report_view(request):
+    return render(request, 'final_report.html')
+
+# API to fetch data for the final_report table, including totals for each head_name and department_name
+def fetch_data(request):
+    try:
+        # Fetch all data from the database
+        data = DataRow.objects.all().values(
+            'department_name',
+            'head_name',
+            'scheme_name',
+            'soe_name',
+            'sanctioned_budget',
+            'revised_estimate',
+            'in_divisible',
+            'divisible',
+            'kinnaur',
+            'lahaul',
+            'spiti',
+            'pangi',
+            'bharmaur',
+        )
+
+        # Convert the QuerySet to a list of dictionaries
+        data_list = list(data)
+
+        # Initialize total dictionaries for department and head name
+        department_totals = defaultdict(lambda: defaultdict(float))
+        head_name_totals = defaultdict(lambda: defaultdict(float))
+
+        # Function to safely convert to float, treating None as 0.0
+        def safe_float(value):
+            return float(value) if value is not None else 0.0
+
+        # Calculate totals for each department and head_name
+        for row in data_list:
+            department_totals[row['department_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
+            department_totals[row['department_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
+            department_totals[row['department_name']]['in_divisible'] += safe_float(row['in_divisible'])
+            department_totals[row['department_name']]['divisible'] += safe_float(row['divisible'])
+            department_totals[row['department_name']]['kinnaur'] += safe_float(row['kinnaur'])
+            department_totals[row['department_name']]['lahaul'] += safe_float(row['lahaul'])
+            department_totals[row['department_name']]['spiti'] += safe_float(row['spiti'])
+            department_totals[row['department_name']]['pangi'] += safe_float(row['pangi'])
+            department_totals[row['department_name']]['bharmaur'] += safe_float(row['bharmaur'])
+            
+            head_name_totals[row['head_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
+            head_name_totals[row['head_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
+            head_name_totals[row['head_name']]['in_divisible'] += safe_float(row['in_divisible'])
+            head_name_totals[row['head_name']]['divisible'] += safe_float(row['divisible'])
+            head_name_totals[row['head_name']]['kinnaur'] += safe_float(row['kinnaur'])
+            head_name_totals[row['head_name']]['lahaul'] += safe_float(row['lahaul'])
+            head_name_totals[row['head_name']]['spiti'] += safe_float(row['spiti'])
+            head_name_totals[row['head_name']]['pangi'] += safe_float(row['pangi'])
+            head_name_totals[row['head_name']]['bharmaur'] += safe_float(row['bharmaur'])
+
+        # Return data along with totals
+        return JsonResponse({
+            'status': 'success',
+            'data': data_list,
+            'department_totals': department_totals,
+            'head_name_totals': head_name_totals
+        }, safe=False)
+
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, safe=False)
+

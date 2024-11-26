@@ -21,32 +21,6 @@ function fetchData() {
         });
 }
 
-// // Populate the main data table
-// function populateMainTable() {
-//     const dataTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
-//     dataTable.innerHTML = ''; // Clear previous table content
-//     allData.forEach(row => {
-//         const newRow = dataTable.insertRow();
-//         newRow.innerHTML = `
-//             <td>${row.department_code}</td>
-//             <td>${row.department_name}</td>
-//             <td>${row.head_name}</td>
-//             <td>${row.scheme_name}</td>
-//             <td>${row.soe_name}</td>
-//             <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
-//             <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
-//             <td>${parseFloat(row.in_divisible).toFixed(2)}</td>
-//             <td>${(row.divisible || 0).toFixed(2)}</td>
-//             <td>${(row.kinnaur || 0).toFixed(2)}</td>
-//             <td>${(row.lahaul || 0).toFixed(2)}</td>
-//             <td>${(row.spiti || 0).toFixed(2)}</td>
-//             <td>${(row.pangi || 0).toFixed(2)}</td>
-//             <td>${(row.bharmaur || 0).toFixed(2)}</td>
-//         `;
-//     });
-// }
-
-
 // Populate the main data table
 function populateMainTable() {
     const dataTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];

@@ -17,12 +17,17 @@ class DataRow(models.Model):
     spiti = models.FloatField(null=True, blank=True)
     pangi = models.FloatField(null=True, blank=True)
     bharmaur = models.FloatField(null=True, blank=True)
-
+    excess = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    surrender = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    variation = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    agreed_by_fd = models.FloatField(null=True, blank=True)
     unique_search = models.CharField(max_length=255, unique=True, editable=False)
 
+
+
+    # Ensure soe_name is unique under a specific head_name
     class Meta:
         constraints = [
-            # Ensure soe_name is unique under a specific head_name
             models.UniqueConstraint(
                 fields=["soe_name", "head_name"],
                 name="unique_soe_per_head"
@@ -34,6 +39,17 @@ class DataRow(models.Model):
         self.divisible = sum(filter(None, [self.kinnaur, self.lahaul, self.spiti, self.pangi, self.bharmaur]))
         self.revised_estimate = sum(filter(None, [self.in_divisible, self.divisible]))
 
+        # Auto-calculate Excess, Surrender, and Variation
+        if self.revised_estimate > self.sanctioned_budget:
+            self.excess = self.revised_estimate - self.sanctioned_budget
+            self.surrender = 0
+        else:
+            self.surrender = self.sanctioned_budget - self.revised_estimate
+            self.excess = 0
+        
+        # Calculate Variation as difference between revised_estimate and surrender
+        self.variation = self.revised_estimate - self.surrender
+
         # Auto-generate unique_search field
         # self.unique_search = f"{self.department_code}-{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
         self.unique_search = f"{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
@@ -42,6 +58,7 @@ class DataRow(models.Model):
         self.full_clean()
 
         super().save(*args, **kwargs)
+
 
     def clean(self):
         # # Ensure department_code is tied to the same department_name across rows

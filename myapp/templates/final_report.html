@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department-wise final_report</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+</head>
+<body>
+    <button onclick="exportToExcel()" class="btn btn-success mb-3">Export to Excel</button>
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Department-wise final_report</h1>
+        <div class="table-responsive">
+            <table id="final_reportTable" class="table table-bordered table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Department Name</th>
+                        <th>Head Name</th>
+                        <th>Scheme Name</th>
+                        <th>SOE Name</th>
+                        <th>Sanctioned Budget (SB)</th>
+                        <th>Revised Estimate (RE)</th>
+                        <th>In Divisible</th>
+                        <th>Divisible</th>
+                        <th>Kinnaur</th>
+                        <th>Lahaul</th>
+                        <th>Spiti</th>
+                        <th>Pangi</th>
+                        <th>Bharmaur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Content will be dynamically populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/final_report.js' %}"></script>
+</body>
+</html>
