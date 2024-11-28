@@ -100,6 +100,7 @@ def import_csv(request):
             for row in reader:
                 # department_code = row["department_code"]
                 department_name = row["department_name"]
+                type = row["type"]
                 head_name = row["head_name"]
                 scheme_name = row["scheme_name"]
                 soe_name = row["soe_name"]
@@ -121,6 +122,7 @@ def import_csv(request):
                         defaults={
                             # "department_code": department_code,
                             "department_name": department_name,
+                            "type": type,
                             "head_name": head_name,
                             "scheme_name": scheme_name,
                             "soe_name": soe_name,
@@ -299,7 +301,7 @@ def fetch_supplementary_data(request):
         data_list = list(data)
 
         # Initialize total dictionaries for department and head name
-        department_totals = defaultdict(lambda: defaultdict(float))
+        # department_totals = defaultdict(lambda: defaultdict(float))
         head_name_totals = defaultdict(lambda: defaultdict(float))
 
         # Function to safely convert to float, treating None as 0.0
@@ -308,11 +310,11 @@ def fetch_supplementary_data(request):
 
         # Calculate totals for each department and head_name
         for row in data_list:
-            department_totals[row['department_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
-            department_totals[row['department_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
-            department_totals[row['department_name']]['excess'] += safe_float(row['excess'])
-            department_totals[row['department_name']]['surrender'] += safe_float(row['surrender'])
-            department_totals[row['department_name']]['variation'] += safe_float(row['variation'])
+            # department_totals[row['department_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
+            # department_totals[row['department_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
+            # department_totals[row['department_name']]['excess'] += safe_float(row['excess'])
+            # department_totals[row['department_name']]['surrender'] += safe_float(row['surrender'])
+            # department_totals[row['department_name']]['variation'] += safe_float(row['variation'])
 
             head_name_totals[row['head_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
             head_name_totals[row['head_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
@@ -323,7 +325,7 @@ def fetch_supplementary_data(request):
         return JsonResponse({
             'status': 'success',
             'data': data_list,
-            'department_totals': department_totals,
+            # 'department_totals': department_totals,
             'head_name_totals': head_name_totals,
         })
 

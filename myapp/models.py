@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 class DataRow(models.Model):
     # department_code = models.CharField(max_length=100)
     department_name = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
     head_name = models.CharField(max_length=100)
     scheme_name = models.CharField(max_length=150)
     soe_name = models.CharField(max_length=100)
@@ -52,7 +53,7 @@ class DataRow(models.Model):
 
         # Auto-generate unique_search field
         # self.unique_search = f"{self.department_code}-{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
-        self.unique_search = f"{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
+        self.unique_search = f"{self.type}-{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
 
         # Call full_clean for validation
         self.full_clean()

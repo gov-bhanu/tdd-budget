@@ -29,6 +29,7 @@ function populateMainTable() {
         const newRow = dataTable.insertRow();
         newRow.innerHTML = `
             <td>${row.department_name}</td>
+            <td>${row.type}</td>
             <td>${row.head_name}</td>
             <td>${row.scheme_name}</td>
             <td>${row.soe_name}</td>
@@ -81,7 +82,7 @@ function populateSOETable(filteredData) {
     filteredData.forEach((row, index) => {
         // Generate uniqueSearch based on the updated model logic
         // const uniqueSearch = `${row.department_code}-${row.department_name}-${row.scheme_name}-${row.head_name}-${row.soe_name}`;
-        const uniqueSearch = `${row.department_name}-${row.scheme_name}-${row.head_name}-${row.soe_name}`;
+        const uniqueSearch = `${row.type}-${row.department_name}-${row.scheme_name}-${row.head_name}-${row.soe_name}`;
 
         const in_divisible = (row.in_divisible || 0).toFixed(2);
         const kinnaur = (row.kinnaur || 0).toFixed(2);
@@ -98,6 +99,7 @@ function populateSOETable(filteredData) {
         const newRow = soeTable.insertRow();
         newRow.innerHTML = `
         <td>${row.scheme_name}</td>
+        <td>${row.type}</td>
         <td>${row.soe_name}</td>
         <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
         <td>${revisedEstimate}</td>

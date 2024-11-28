@@ -30,36 +30,36 @@ function populateSupplementaryReportTable(data, departmentTotals, headNameTotals
     // Loop through the data and populate the table
     data.forEach((row, index) => {
         // Add department total row when department changes
-        if (row.department_name !== departmentNamePrev) {
-            if (departmentNamePrev !== '') {
-                supplementaryReportTableBody.insertRow().innerHTML = `
-                    <td colspan="4"><strong>${departmentNamePrev} Total</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].revised_estimate.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].excess.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].surrender.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].variation.toFixed(2)}</strong></td>
-                `;
-            }
-            // Add the new department row
-            departmentNamePrev = row.department_name;
-        }
+        // if (row.department_name !== departmentNamePrev) {
+        //     if (departmentNamePrev !== '') {
+        //         supplementaryReportTableBody.insertRow().innerHTML = `
+        //             <td colspan="4"><strong>${departmentNamePrev} Total</strong></td>
+        //             <td><strong>${departmentTotals[departmentNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
+        //             <td><strong>${departmentTotals[departmentNamePrev].revised_estimate.toFixed(2)}</strong></td>
+        //             <td><strong>${departmentTotals[departmentNamePrev].excess.toFixed(2)}</strong></td>
+        //             <td><strong>${departmentTotals[departmentNamePrev].surrender.toFixed(2)}</strong></td>
+        //             <td><strong>${departmentTotals[departmentNamePrev].variation.toFixed(2)}</strong></td>
+        //         `;
+        //     }
+        //     // Add the new department row
+        //     departmentNamePrev = row.department_name;
+        // }
 
         // Add head total row when head changes
-        if (row.head_name !== headNamePrev) {
-            if (headNamePrev !== '') {
-                supplementaryReportTableBody.insertRow().innerHTML = `
-                    <td colspan="4"><strong>${headNamePrev} Total</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].revised_estimate.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].excess.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].surrender.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].variation.toFixed(2)}</strong></td>
-                `;
-            }
-            // Add the new head row
-            headNamePrev = row.head_name;
-        }
+        // if (row.head_name !== headNamePrev) {
+        //     if (headNamePrev !== '') {
+        //         supplementaryReportTableBody.insertRow().innerHTML = `
+        //             <td colspan="4"><strong>${headNamePrev} Total</strong></td>
+        //             <td><strong>${headNameTotals[headNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
+        //             <td><strong>${headNameTotals[headNamePrev].revised_estimate.toFixed(2)}</strong></td>
+        //             <td><strong>${headNameTotals[headNamePrev].excess.toFixed(2)}</strong></td>
+        //             <td><strong>${headNameTotals[headNamePrev].surrender.toFixed(2)}</strong></td>
+        //             <td><strong>${headNameTotals[headNamePrev].variation.toFixed(2)}</strong></td>
+        //         `;
+        //     }
+        //     // Add the new head row
+        //     headNamePrev = row.head_name;
+        // }
 
         // Add the current row
         const rowElement = supplementaryReportTableBody.insertRow();

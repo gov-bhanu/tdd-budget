@@ -7,6 +7,7 @@ class DataRowAdmin(admin.ModelAdmin):
         'unique_search',
         # 'department_code',
         'department_name',
+        'type',
         'head_name',
         'scheme_name',
         'soe_name',
