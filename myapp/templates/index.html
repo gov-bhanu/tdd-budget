@@ -12,20 +12,21 @@
 <body>
     <div class="container mt-4">
         <h1 class="text-center mb-4">Data Viewer</h1>
+
     <!-- Inline messages for feedback -->
     <div id="inlineMessage" class="alert" role="alert" style="display: none;"></div>
 
-    <!-- Export Button -->
+    <!-- Import Button -->
     <a href="/import_csv/" class="btn btn-primary mb-4">Import CSV</a>
+
+    <!-- Changes Report -->
+    <a href="/changes_report/" class="btn btn-success mb-4">Changes Report</a>
 
     <!-- Export Button -->
     <button class="btn btn-primary mb-4" onclick="exportToCSV()">Export to CSV</button>
 
     <!-- Supplementary Report -->
     <a href="/supplementary_report/" class="btn btn-success mb-4">Supplementary Report</a>
-
-    <!-- Final Report -->
-    <a href="/final_report/" class="btn btn-success mb-4">Final Report</a>
 
     <!-- Add Data Button -->
     <a href="/add/" class="btn btn-primary mb-4">Add New Data</a>

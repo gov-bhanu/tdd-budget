@@ -34,10 +34,25 @@ class DataRow(models.Model):
             ),
         ]
 
+    
     def save(self, *args, **kwargs):
-        # Auto-calculate revised_estimate
-        self.divisible = sum(filter(None, [self.kinnaur, self.lahaul, self.spiti, self.pangi, self.bharmaur]))
-        self.revised_estimate = sum(filter(None, [self.in_divisible, self.divisible]))
+        # Ensure that the fields are cast to float, defaulting to 0 if they are None or empty
+        self.divisible = sum(filter(None, [
+            float(self.kinnaur or 0),
+            float(self.lahaul or 0),
+            float(self.spiti or 0),
+            float(self.pangi or 0),
+            float(self.bharmaur or 0)
+        ]))
+
+        # Ensure that in_divisible and revised_estimate are treated as floats
+        self.revised_estimate = sum(filter(None, [
+            float(self.in_divisible or 0),
+            self.divisible  # already a float value
+        ]))
+
+        # Ensure sanctioned_budget is a float
+        self.sanctioned_budget = float(self.sanctioned_budget or 0)
 
         # Auto-calculate Excess, Surrender, and Variation
         if self.revised_estimate > self.sanctioned_budget:
@@ -47,17 +62,18 @@ class DataRow(models.Model):
             self.surrender = self.sanctioned_budget - self.revised_estimate
             self.excess = 0
         
-        # Calculate Variation as difference between revised_estimate and surrender
+        # Calculate Variation as the difference between revised_estimate and surrender
         self.variation = self.revised_estimate - self.surrender
 
         # Auto-generate unique_search field
-        # self.unique_search = f"{self.department_code}-{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
         self.unique_search = f"{self.department_name}-{self.scheme_name}-{self.head_name}-{self.soe_name}"
 
         # Call full_clean for validation
         self.full_clean()
 
+        # Save the object
         super().save(*args, **kwargs)
+
 
 
     def clean(self):

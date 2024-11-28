@@ -8,6 +8,7 @@ from django.db.models import Sum
 import json
 import csv
 from django.core.serializers import serialize
+from django.db.models import F
 
 
 
@@ -156,38 +157,44 @@ def import_csv(request):
 
 
 
+
+
 def add_data(request):
     """Render the add form and handle new data submission."""
     if request.method == 'POST':
-        # Get form data
+        # Get form data from request
+        department_name = request.POST.get('department_name')
         head_name = request.POST.get('head_name')
-        head_type = request.POST.get('head_type')
-        itdp_name = request.POST.get('itdp_name')
+        scheme_name = request.POST.get('scheme_name')
         soe_name = request.POST.get('soe_name')
         sanctioned_budget = request.POST.get('sanctioned_budget')
-        revised_estimate = request.POST.get('revised_estimate')
-        # department_code = request.POST.get('department_code')
-        department_name = request.POST.get('department_name')
-        scheme_name = request.POST.get('scheme_name')
+        in_divisible = request.POST.get('in_divisible', 0)  # Default to 0 if empty
+        kinnaur = request.POST.get('kinnaur', 0)  # Default to 0 if empty
+        lahaul = request.POST.get('lahaul', 0)  # Default to 0 if empty
+        spiti = request.POST.get('spiti', 0)  # Default to 0 if empty
+        pangi = request.POST.get('pangi', 0)  # Default to 0 if empty
+        bharmaur = request.POST.get('bharmaur', 0)  # Default to 0 if empty
 
         # Save the data into the database
         DataRow.objects.create(
+            department_name=department_name,
             head_name=head_name,
-            head_type=head_type,
-            itdp_name=itdp_name,
+            scheme_name=scheme_name,
             soe_name=soe_name,
             sanctioned_budget=sanctioned_budget,
-            revised_estimate=revised_estimate,
-            # department_code=department_code,
-            department_name=department_name,
-            scheme_name=scheme_name
+            in_divisible=in_divisible,
+            kinnaur=kinnaur,
+            lahaul=lahaul,
+            spiti=spiti,
+            pangi=pangi,
+            bharmaur=bharmaur
         )
         messages.success(request, 'Data added successfully!')
-        
-        # Redirect to the home page or a success page
-        return redirect('index')
 
-    return render(request, 'add.html')  # Render the add form
+        # Redirect to the home page or a success page
+        return redirect('index')  # Make sure 'index' is the correct URL name
+
+    return render(request, 'add.html')  # Render the add form if GET request
 
 
 
@@ -317,6 +324,49 @@ def fetch_supplementary_data(request):
             'status': 'success',
             'data': data_list,
             'head_name_totals': head_name_totals,
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        })
+
+
+
+
+
+
+
+
+
+def revision_report_view(request):
+    return render(request, 'revision_report.html')
+
+
+# API to fetch data for the revision report where sanctioned_budget != revised_estimate
+def fetch_revision_data(request):
+    try:
+        # Fetch all data where sanctioned_budget != revised_estimate
+        data = DataRow.objects.exclude(sanctioned_budget=F('revised_estimate')).values(
+            'department_name',
+            'head_name',
+            'scheme_name',
+            'soe_name',
+            'sanctioned_budget',
+            'revised_estimate',
+            'excess',
+            'surrender',
+            'variation',
+        )
+
+        # Convert the QuerySet to a list of dictionaries
+        data_list = list(data)
+
+        # Return data
+        return JsonResponse({
+            'status': 'success',
+            'data': data_list,
         })
 
     except Exception as e:

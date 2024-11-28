@@ -140,7 +140,7 @@ table td input {
 /* Specific Styling for Scheme Name Column */
 #dataTable td:nth-child(3), /* Scheme Name Column */
 #dataTable th:nth-child(3) {
-    max-width: 400px; /* Adjust width as needed */
+    max-width: 500px; /* Adjust width as needed */
     overflow: hidden; /* Hide overflowed content */
     text-overflow: ellipsis; /* Add ellipsis for clipped text */
     white-space: nowrap; /* Prevent wrapping */
