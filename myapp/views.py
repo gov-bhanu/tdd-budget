@@ -279,7 +279,7 @@ def fetch_data(request):
 def supplementary_report_view(request):
     return render(request, 'supplementary_report.html')
 
-# API to fetch supplementary report data, including totals for each head_name and department_name
+# API to fetch supplementary report data, including totals for each head_name
 def fetch_supplementary_data(request):
     try:
         # Fetch all data from the database
@@ -298,22 +298,15 @@ def fetch_supplementary_data(request):
         # Convert the QuerySet to a list of dictionaries
         data_list = list(data)
 
-        # Initialize total dictionaries for department and head name
-        department_totals = defaultdict(lambda: defaultdict(float))
+        # Initialize total dictionary for head_name
         head_name_totals = defaultdict(lambda: defaultdict(float))
 
         # Function to safely convert to float, treating None as 0.0
         def safe_float(value):
             return float(value) if value is not None else 0.0
 
-        # Calculate totals for each department and head_name
+        # Calculate totals for each head_name
         for row in data_list:
-            department_totals[row['department_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
-            department_totals[row['department_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
-            department_totals[row['department_name']]['excess'] += safe_float(row['excess'])
-            department_totals[row['department_name']]['surrender'] += safe_float(row['surrender'])
-            department_totals[row['department_name']]['variation'] += safe_float(row['variation'])
-
             head_name_totals[row['head_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
             head_name_totals[row['head_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
             head_name_totals[row['head_name']]['excess'] += safe_float(row['excess'])
@@ -323,7 +316,6 @@ def fetch_supplementary_data(request):
         return JsonResponse({
             'status': 'success',
             'data': data_list,
-            'department_totals': department_totals,
             'head_name_totals': head_name_totals,
         })
 

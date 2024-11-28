@@ -8,7 +8,7 @@ function fetchSupplementaryData() {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                populateSupplementaryReportTable(data.data, data.department_totals, data.head_name_totals);
+                populateSupplementaryReportTable(data.data, data.head_name_totals);
             } else {
                 alert('Error fetching data: ' + data.message);
             }
@@ -20,31 +20,17 @@ function fetchSupplementaryData() {
 }
 
 // Populate the supplementary report table with data and totals
-function populateSupplementaryReportTable(data, departmentTotals, headNameTotals) {
+function populateSupplementaryReportTable(data, headNameTotals) {
     const supplementaryReportTableBody = document.getElementById('supplementaryReportTable').getElementsByTagName('tbody')[0];
-    supplementaryReportTableBody.innerHTML = '';  // Clear previous table content
+    supplementaryReportTableBody.innerHTML = ''; // Clear previous table content
 
-    let departmentNamePrev = '';  // Track previous department name for grouping
-    let headNamePrev = '';  // Track previous head name for grouping
+    // Sort the data by `head_name`
+    data.sort((a, b) => a.head_name.localeCompare(b.head_name));
+
+    let headNamePrev = ''; // Track previous head name for grouping
 
     // Loop through the data and populate the table
     data.forEach((row, index) => {
-        // Add department total row when department changes
-        if (row.department_name !== departmentNamePrev) {
-            if (departmentNamePrev !== '') {
-                supplementaryReportTableBody.insertRow().innerHTML = `
-                    <td colspan="4"><strong>${departmentNamePrev} Total</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].revised_estimate.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].excess.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].surrender.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].variation.toFixed(2)}</strong></td>
-                `;
-            }
-            // Add the new department row
-            departmentNamePrev = row.department_name;
-        }
-
         // Add head total row when head changes
         if (row.head_name !== headNamePrev) {
             if (headNamePrev !== '') {
@@ -57,7 +43,7 @@ function populateSupplementaryReportTable(data, departmentTotals, headNameTotals
                     <td><strong>${headNameTotals[headNamePrev].variation.toFixed(2)}</strong></td>
                 `;
             }
-            // Add the new head row
+            // Update the previous head name
             headNamePrev = row.head_name;
         }
 
@@ -76,13 +62,15 @@ function populateSupplementaryReportTable(data, departmentTotals, headNameTotals
         `;
     });
 
-    // Add final department total
-    supplementaryReportTableBody.insertRow().innerHTML = `
-        <td colspan="4"><strong>${departmentNamePrev} Total</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].revised_estimate.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].excess.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].surrender.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].variation.toFixed(2)}</strong></td>
-    `;
+    // Add the final head total
+    if (headNamePrev !== '') {
+        supplementaryReportTableBody.insertRow().innerHTML = `
+            <td colspan="4"><strong>${headNamePrev} Total</strong></td>
+            <td><strong>${headNameTotals[headNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
+            <td><strong>${headNameTotals[headNamePrev].revised_estimate.toFixed(2)}</strong></td>
+            <td><strong>${headNameTotals[headNamePrev].excess.toFixed(2)}</strong></td>
+            <td><strong>${headNameTotals[headNamePrev].surrender.toFixed(2)}</strong></td>
+            <td><strong>${headNameTotals[headNamePrev].variation.toFixed(2)}</strong></td>
+        `;
+    }
 }

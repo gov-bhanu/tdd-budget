@@ -117,6 +117,14 @@ table td input {
     box-sizing: border-box;
 }
 
+
+/* Specific Styling for SOE Table */
+#soeDetails table#soeTable th,
+#soeDetails table#soeTable td {
+    text-align: center; /* Center align text in SOE table */
+    vertical-align: middle; /* Middle align content vertically */
+}
+
 /* Style the other input fields */
 #soeDetails table#soeTable td:nth-child(5) input, /* Revised Estimate */
 #soeDetails table#soeTable td:nth-child(7) input, /* Kinnaur */
@@ -128,6 +136,23 @@ table td input {
     padding: 2px;
     font-size: 12px; /* Reduced font size */
     box-sizing: border-box;
+}
+/* Specific Styling for Scheme Name Column */
+#dataTable td:nth-child(3), /* Scheme Name Column */
+#dataTable th:nth-child(3) {
+    max-width: 400px; /* Adjust width as needed */
+    overflow: hidden; /* Hide overflowed content */
+    text-overflow: ellipsis; /* Add ellipsis for clipped text */
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+/* Specific Styling for Scheme Name Column */
+#supplementaryReportTable td:nth-child(3), /* Scheme Name Column */
+#supplementaryReportTable th:nth-child(3) {
+    max-width: 600px; /* Adjust width as needed */
+    overflow: hidden; /* Hide overflowed content */
+    text-overflow: ellipsis; /* Add ellipsis for clipped text */
+    white-space: nowrap; /* Prevent wrapping */
 }
 
 
@@ -151,11 +176,4 @@ table th,
 table td {
     text-align: center; /* Horizontal alignment: center */
     vertical-align: middle; /* Vertical alignment: middle */
-}
-
-/* Specific Styling for SOE Table */
-#soeDetails table#soeTable th,
-#soeDetails table#soeTable td {
-    text-align: center; /* Center align text in SOE table */
-    vertical-align: middle; /* Middle align content vertically */
 }
