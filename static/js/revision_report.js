@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     fetchRevisionData(); // Fetch data when the page loads
+    document.getElementById('exportToExcel').addEventListener('click', exportToExcel); // Add event listener for the button
 });
 
 // Fetch data from the API
@@ -39,4 +40,11 @@ function populateRevisionReportTable(data) {
             <td>${parseFloat(row.variation || 0).toFixed(2)}</td>
         `;
     });
+}
+
+// Export table data to Excel
+function exportToExcel() {
+    const table = document.getElementById('revisionReportTable');
+    const wb = XLSX.utils.table_to_book(table, {sheet: "Revision Report"});
+    XLSX.writeFile(wb, 'revision_report.xlsx');
 }
