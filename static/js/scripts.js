@@ -232,3 +232,27 @@ function exportToCSV() {
     link.click();
 }
 
+
+function exportToExcel() {
+    const table = document.getElementById('dataTable');
+    const rows = table.getElementsByTagName('tr');
+
+    // Prepare data for the Excel file
+    const data = [];
+    for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        const rowData = [];
+        for (let j = 0; j < cells.length; j++) {
+            rowData.push(cells[j].textContent.trim());
+        }
+        data.push(rowData);
+    }
+
+    // Create a workbook and add the data
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    // Generate Excel file and trigger download
+    XLSX.writeFile(wb, 'data.xlsx');
+}
