@@ -1,8 +1,8 @@
 /* Body Styling */
 body {
-    font-size: 14px; /* Reduced overall font size */
+    font-size: 18px; /* Reduced overall font size */
     padding: 10px 0;
-    font-family: Arial, sans-serif;
+    font-family: "Roboto Condensed", sans-serif;
     background-color: #f8f9fa; /* Subtle background color */
 }
 
@@ -24,10 +24,11 @@ body {
 
 /* Headings */
 h1 {
-    font-size: 24px; /* Reduced font size */
+    font-size: 35px; /* Reduced font size */
     text-align: center;
     margin-bottom: 20px;
     color: #333;
+    font-weight: bold;
 }
 
 h2 {
@@ -73,14 +74,11 @@ table td input {
 
 /* Buttons */
 .btn {
-    font-size: 12px; /* Reduced button font size */
+    font-size: 14px; /* Reduced button font size */
     padding: 6px 12px; /* Adjusted padding */
     cursor: pointer;
 }
 
-.btn:hover {
-    background-color: #eef1f5;
-}
 
 /* Inline Messages */
 .inline-message {

@@ -42,9 +42,26 @@ function populateRevisionReportTable(data) {
     });
 }
 
-// Export table data to Excel
-function exportToExcel() {
-    const table = document.getElementById('revisionReportTable');
-    const wb = XLSX.utils.table_to_book(table, {sheet: "Revision Report"});
-    XLSX.writeFile(wb, 'revision_report.xlsx');
+
+
+// Function to export a table to Excel
+function exportToExcel(tableId, filename = 'excel_data') {
+    // Get the table element by its ID
+    const table = document.getElementById(tableId);
+
+    // Check if the table exists
+    if (!table) {
+        console.error(`Table with ID "${tableId}" not found.`);
+        return;
+    }
+
+    // Create a workbook and worksheet from the table
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.table_to_sheet(table);
+
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+    // Trigger the Excel file download
+    XLSX.writeFile(workbook, `${filename}.xlsx`);
 }

@@ -119,28 +119,24 @@ function populateSupplementaryReportTable(data, headNameTotals) {
 
 
 
-// Export Excel thing
-document.addEventListener("DOMContentLoaded", function () {
-    fetchSupplementaryData(); // Fetch data when the page loads
-
-    // Add click event for the Export to Excel button
-    document.getElementById('exportToExcel').addEventListener('click', function () {
-        exportTableToExcel('supplementaryReportTable', 'Supplementary_Report');
-    });
-});
-
-// Function to export the table to Excel
-function exportTableToExcel(tableId, filename = 'excel_data') {
-    // Get the table element
+// Function to export a table to Excel
+function exportToExcel(tableId, filename = 'excel_data') {
+    // Get the table element by its ID
     const table = document.getElementById(tableId);
 
-    // Create a workbook and worksheet
+    // Check if the table exists
+    if (!table) {
+        console.error(`Table with ID "${tableId}" not found.`);
+        return;
+    }
+
+    // Create a workbook and worksheet from the table
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.table_to_sheet(table);
 
-    // Append worksheet to workbook
+    // Append the worksheet to the workbook
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
-    // Trigger Excel file download
+    // Trigger the Excel file download
     XLSX.writeFile(workbook, `${filename}.xlsx`);
 }

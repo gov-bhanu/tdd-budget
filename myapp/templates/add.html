@@ -7,13 +7,16 @@
     <title>Add Data</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/add_data_styles.css' %}">
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="text-center mb-4">Add New Data</h1>
-        <a href="/" class="btn btn-primary mb-4">Show All Data</a>
+        <a href="/" class="btn btn-primary mb-4">Home</a>
         <form method="POST" action="" class="border p-4 bg-light shadow-sm rounded">
             {% csrf_token %}
             <!-- Row 1: Department Name & Head Name -->

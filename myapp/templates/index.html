@@ -7,22 +7,27 @@
     <title>Data Viewer</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="text-center mb-4">Data Viewer</h1>
+        <h1 class="text-center mb-4">BUDGET DATABASE</h1>
 
     <!-- Inline messages for feedback -->
     <div id="inlineMessage" class="alert" role="alert" style="display: none;"></div>
 
     <!-- Import Button -->
-    <a href="/import_csv/" class="btn btn-primary mb-4">Import CSV</a>
+    <a href="/import_csv/" class="btn btn-secondary mb-4">Import CSV</a>
 
     <!-- Export Button -->
-    <button class="btn btn-primary mb-4" onclick="exportToCSV()">Download Backup</button>
+    <button class="btn btn-secondary mb-4" onclick="exportToCSV()">Download Backup</button>
     
     <!-- Export Button -->
     <button class="btn btn-primary mb-4" onclick="exportToExcel()">Export To Excel</button>
@@ -36,6 +41,8 @@
     <!-- Add Data Button -->
     <a href="/add/" class="btn btn-primary mb-4">Add New Data</a>
 
+    <!-- Add Data Button -->
+    <a href="/admin/" class="btn btn-warning mb-4">Admin Page</a>
 
         <!-- Dropdown Filter Section -->
         <div class="form-group row">
