@@ -21,6 +21,7 @@ class DataRow(models.Model):
     surrender = models.FloatField(null=True, blank=True)
     variation = models.FloatField(null=True, blank=True)
     agreed_by_fd = models.FloatField(null=True, blank=True)
+    last_change_date = models.DateTimeField(auto_now=True)  # auto_now makes it non-editable
     unique_search = models.CharField(max_length=255, unique=True, editable=False)
 
 

@@ -20,7 +20,19 @@
         <!-- Export to Excel Button -->
         <a href="/supplementary_report" class="btn btn-primary mb-4">See Supplementary Report</a>
         <button class="btn btn-primary mb-4" onclick="exportToExcel('revisionReportTable', 'Revision_Report')">Export Revision Report</button>
-        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-primary" id="filterButton">Filter</button>
+            </div>
+        </div>
         <div class="table-responsive">
             <table id="revisionReportTable" class="table table-bordered table-striped table-hover">
                 <thead class="thead-dark">
@@ -33,7 +45,7 @@
                         <th>Revised Estimate (RE)</th>
                         <th>Excess</th>
                         <th>Surrender</th>
-                        <th>Variation</th>
+                        <th>Last Change Date</th>
                     </tr>
                 </thead>
                 <tbody>

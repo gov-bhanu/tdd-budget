@@ -9,7 +9,8 @@ import json
 import csv
 from django.core.serializers import serialize
 from django.db.models import F
-
+from django.utils.dateparse import parse_date
+from django.utils.timezone import now, timedelta
 
 
 def index(request):
@@ -62,6 +63,8 @@ def update_revised_estimate(request):
 
                 # revised estimate = in_divisible + divisible
                 row.revised_estimate = in_divisible + divisible  # Ensure revised estimate is also saved
+                # Set the last_change_date to the current time
+                row.last_change_date = now()
                 row.save()  # Save the updated row
 
                 return JsonResponse({'status': 'success', 'message': 'Revised estimate updated and sanctioned budget set.'})
@@ -347,8 +350,21 @@ def revision_report_view(request):
 # API to fetch data for the revision report where sanctioned_budget != revised_estimate
 def fetch_revision_data(request):
     try:
-        # Fetch all data where sanctioned_budget != revised_estimate
-        data = DataRow.objects.exclude(sanctioned_budget=F('revised_estimate')).values(
+        # Get optional start_date and end_date from query parameters
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
+        # Base QuerySet: Exclude rows where sanctioned_budget == revised_estimate
+        rows = DataRow.objects.exclude(sanctioned_budget=F('revised_estimate'))
+
+        # Apply date range filtering if provided
+        if start_date:
+            rows = rows.filter(last_change_date__gte=parse_date(start_date))
+        if end_date:
+            rows = rows.filter(last_change_date__lte=parse_date(end_date))
+
+        # Select required fields
+        data = rows.values(
             'department_name',
             'head_name',
             'scheme_name',
@@ -358,6 +374,7 @@ def fetch_revision_data(request):
             'excess',
             'surrender',
             'variation',
+            'last_change_date',
         )
 
         # Convert the QuerySet to a list of dictionaries

@@ -26,22 +26,22 @@ function populateRevisionReportTable(data) {
     revisionReportTableBody.innerHTML = '';  // Clear previous table content
 
     // Loop through the data and populate the table
+    // REMOVED THE VARIATION COLUMN. JUST ADD LIKE A COPY OF ROW.SURRENDER, IT WILL SHOW UP AGAIN. CALCULATIONS ARE NOT REMOVED FOR VARIATION.
     data.forEach((row) => {
         const rowElement = revisionReportTableBody.insertRow();
         rowElement.innerHTML = `
-            <td>${row.department_name}</td>
-            <td>${row.head_name}</td>
-            <td>${row.scheme_name}</td>
-            <td>${row.soe_name}</td>
-            <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
-            <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
-            <td>${parseFloat(row.excess || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.surrender || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.variation || 0).toFixed(2)}</td>
-        `;
+        <td>${row.department_name}</td>
+        <td>${row.head_name}</td>
+        <td>${row.scheme_name}</td>
+        <td>${row.soe_name}</td>
+        <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
+        <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
+        <td>${parseFloat(row.excess || 0).toFixed(2)}</td>
+        <td>${parseFloat(row.surrender || 0).toFixed(2)}</td> 
+        <td>${new Date(row.last_change_date).toLocaleDateString()}</td>
+    `;    
     });
 }
-
 
 
 // Function to export a table to Excel
@@ -64,4 +64,39 @@ function exportToExcel(tableId, filename = 'excel_data') {
 
     // Trigger the Excel file download
     XLSX.writeFile(workbook, `${filename}.xlsx`);
+}
+
+
+
+
+
+
+// filteration based on date range
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('filterButton').addEventListener('click', fetchFilteredData);
+
+    fetchRevisionData(); // Initial fetch
+});
+
+function fetchFilteredData() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    const url = new URL('/fetch-revision-data/', window.location.origin);
+    if (startDate) url.searchParams.append('start_date', startDate);
+    if (endDate) url.searchParams.append('end_date', endDate);
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                populateRevisionReportTable(data.data);
+            } else {
+                alert('Error fetching data: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error fetching data. Please check the console for details.');
+        });
 }

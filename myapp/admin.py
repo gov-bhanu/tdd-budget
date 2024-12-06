@@ -12,6 +12,7 @@ class DataRowAdmin(admin.ModelAdmin):
         'soe_name',
         'sanctioned_budget',
         'revised_estimate_display',  # Use a custom method for displaying revised_estimate
+        'last_change_date',
         'in_divisible',
         'divisible',
         'kinnaur',
@@ -19,6 +20,7 @@ class DataRowAdmin(admin.ModelAdmin):
         'spiti',
         'pangi',
         'bharmaur',
+        'last_change_date',
     )
     search_fields = ('head_name', 'soe_name')  # Remove unique_search from search_fields
     list_filter = ('head_name',)
