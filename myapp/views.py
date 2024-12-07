@@ -371,11 +371,11 @@ def fetch_revision_data(request):
             'soe_name',
             'sanctioned_budget',
             'revised_estimate',
-            'excess',
-            'surrender',
-            'variation',
-            'last_change_date',
+            'excess',      # New column
+            'surrender',      # New column
+            'last_change_date',      # New column
         )
+
 
         # Convert the QuerySet to a list of dictionaries
         data_list = list(data)

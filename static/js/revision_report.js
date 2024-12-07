@@ -36,8 +36,8 @@ function populateRevisionReportTable(data) {
         <td>${row.soe_name}</td>
         <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
         <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
-        <td>${parseFloat(row.excess || 0).toFixed(2)}</td>
-        <td>${parseFloat(row.surrender || 0).toFixed(2)}</td> 
+        <td>${(row.excess || 0).toFixed(2)}</td>
+        <td>${(row.surrender || 0).toFixed(2)}</td>
         <td>${new Date(row.last_change_date).toLocaleDateString()}</td>
     `;    
     });

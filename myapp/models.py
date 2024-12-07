@@ -8,7 +8,7 @@ class DataRow(models.Model):
     head_name = models.CharField(max_length=100)
     scheme_name = models.CharField(max_length=150)
     soe_name = models.CharField(max_length=100)
-    sanctioned_budget = models.FloatField()
+    sanctioned_budget = models.FloatField(null=True, blank=True)
     revised_estimate = models.FloatField(null=True, blank=True)
     in_divisible = models.FloatField(null=True, blank=True)
     divisible = models.FloatField(null=True, blank=True)
