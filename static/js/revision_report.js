@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     fetchRevisionData(); // Fetch data when the page loads
     document.getElementById('exportToExcel').addEventListener('click', exportToExcel); // Add event listener for the button
 });
@@ -9,7 +9,7 @@ function fetchRevisionData() {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                populateRevisionReportTable(data.data);
+                populateRevisionReportTable(data.data, data.head_name_totals);
             } else {
                 alert('Error fetching data: ' + data.message);
             }
@@ -20,52 +20,102 @@ function fetchRevisionData() {
         });
 }
 
-// Populate the revision report table with data
-function populateRevisionReportTable(data) {
+// Populate the revision report table with sorted and grouped data
+function populateRevisionReportTable(data, headNameTotals) {
     const revisionReportTableBody = document.getElementById('revisionReportTable').getElementsByTagName('tbody')[0];
-    revisionReportTableBody.innerHTML = '';  // Clear previous table content
+    revisionReportTableBody.innerHTML = ''; // Clear previous table content
+
+    // Sort the data by `head_name`
+    data.sort((a, b) => a.head_name.localeCompare(b.head_name));
+
+    let headNamePrev = ''; // Track previous head name for grouping
+    let departmentNamePrev = ''; // Track previous department name for grouping
+    let schemeNamePrev = ''; // Track previous scheme name for grouping
 
     // Loop through the data and populate the table
-    // REMOVED THE VARIATION COLUMN. JUST ADD LIKE A COPY OF ROW.SURRENDER, IT WILL SHOW UP AGAIN. CALCULATIONS ARE NOT REMOVED FOR VARIATION.
     data.forEach((row) => {
+        // Add head total row when head changes
+        if (row.head_name !== headNamePrev) {
+            if (headNamePrev !== '') {
+                const totals = headNameTotals[headNamePrev] || {
+                    sanctioned_budget: 0,
+                    revised_estimate: 0,
+                    excess: 0,
+                    surrender: 0,
+                };
+
+                revisionReportTableBody.insertRow().innerHTML = `
+                    <td></td>
+                    <td><strong>${headNamePrev} Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td><strong>${totals.sanctioned_budget.toFixed(2)}</strong></td>
+                    <td><strong>${totals.revised_estimate.toFixed(2)}</strong></td>
+                    <td><strong>${totals.excess.toFixed(2)}</strong></td>
+                    <td><strong>${totals.surrender.toFixed(2)}</strong></td>
+                    <td></td>
+                `;
+            }
+            headNamePrev = row.head_name;
+        }
+
+        // Show department_name and scheme_name only when they change
+        const showDepartmentName = row.department_name !== departmentNamePrev;
+        const showSchemeName = row.scheme_name !== schemeNamePrev;
+
+        // Add the current row
         const rowElement = revisionReportTableBody.insertRow();
         rowElement.innerHTML = `
-        <td>${row.department_name}</td>
-        <td>${row.head_name}</td>
-        <td>${row.scheme_name}</td>
-        <td>${row.soe_name}</td>
-        <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
-        <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
-        <td>${(row.excess || 0).toFixed(2)}</td>
-        <td>${(row.surrender || 0).toFixed(2)}</td>
-        <td>${new Date(row.last_change_date).toLocaleDateString()}</td>
-    `;    
-    });
-}
+            <td>${showDepartmentName ? row.department_name : ''}</td>
+            <td>${showSchemeName ? row.scheme_name : ''}</td>
+            <td>${row.head_name}</td>
+            <td>${row.soe_name}</td>
+            <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
+            <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
+            <td>${parseFloat(row.excess || 0).toFixed(2)}</td>
+            <td>${parseFloat(row.surrender || 0).toFixed(2)}</td>
+    `;
+    
 
+        departmentNamePrev = row.department_name;
+        schemeNamePrev = row.scheme_name;
+    });
+
+    // Add the final head total
+    if (headNamePrev !== '') {
+        const totals = headNameTotals[headNamePrev] || {
+            sanctioned_budget: 0,
+            revised_estimate: 0,
+            excess: 0,
+            surrender: 0,
+        };
+
+        revisionReportTableBody.insertRow().innerHTML = `
+            <td></td>
+            <td></td>
+            <td><strong>${headNamePrev} Total</strong></td>
+            <td></td>
+            <td><strong>${totals.sanctioned_budget.toFixed(2)}</strong></td>
+            <td><strong>${totals.revised_estimate.toFixed(2)}</strong></td>
+            <td><strong>${totals.excess.toFixed(2)}</strong></td>
+            <td><strong>${totals.surrender.toFixed(2)}</strong></td>
+        `;
+
+    }
+}
 
 // Function to export a table to Excel
 function exportToExcel(tableId, filename = 'excel_data') {
-    // Get the table element by its ID
     const table = document.getElementById(tableId);
-
-    // Check if the table exists
     if (!table) {
         console.error(`Table with ID "${tableId}" not found.`);
         return;
     }
-
-    // Create a workbook and worksheet from the table
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.table_to_sheet(table);
-
-    // Append the worksheet to the workbook
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-
-    // Trigger the Excel file download
     XLSX.writeFile(workbook, `${filename}.xlsx`);
 }
-
 
 
 

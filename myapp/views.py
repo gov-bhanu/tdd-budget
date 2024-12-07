@@ -346,24 +346,20 @@ def fetch_supplementary_data(request):
 def revision_report_view(request):
     return render(request, 'revision_report.html')
 
+from collections import defaultdict
 
-# API to fetch data for the revision report where sanctioned_budget != revised_estimate
 def fetch_revision_data(request):
     try:
-        # Get optional start_date and end_date from query parameters
         start_date = request.GET.get('start_date')
         end_date = request.GET.get('end_date')
 
-        # Base QuerySet: Exclude rows where sanctioned_budget == revised_estimate
         rows = DataRow.objects.exclude(sanctioned_budget=F('revised_estimate'))
 
-        # Apply date range filtering if provided
         if start_date:
             rows = rows.filter(last_change_date__gte=parse_date(start_date))
         if end_date:
             rows = rows.filter(last_change_date__lte=parse_date(end_date))
 
-        # Select required fields
         data = rows.values(
             'department_name',
             'head_name',
@@ -371,23 +367,32 @@ def fetch_revision_data(request):
             'soe_name',
             'sanctioned_budget',
             'revised_estimate',
-            'excess',      # New column
-            'surrender',      # New column
-            'last_change_date',      # New column
+            'excess',
+            'surrender',
+            'last_change_date',
         )
 
-
-        # Convert the QuerySet to a list of dictionaries
         data_list = list(data)
 
-        # Return data
+        head_name_totals = defaultdict(lambda: defaultdict(float))
+
+        def safe_float(value):
+            return float(value) if value is not None else 0.0
+
+        for row in data_list:
+            head_name_totals[row['head_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
+            head_name_totals[row['head_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
+            head_name_totals[row['head_name']]['excess'] += safe_float(row['excess'])
+            head_name_totals[row['head_name']]['surrender'] += safe_float(row['surrender'])
+
         return JsonResponse({
             'status': 'success',
             'data': data_list,
+            'head_name_totals': head_name_totals,
         })
 
     except Exception as e:
         return JsonResponse({
             'status': 'error',
-            'message': str(e)
+            'message': str(e),
         })
