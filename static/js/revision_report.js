@@ -46,8 +46,8 @@ function populateRevisionReportTable(data, headNameTotals) {
 
                 revisionReportTableBody.insertRow().innerHTML = `
                     <td></td>
-                    <td><strong>${headNamePrev} Total</strong></td>
                     <td></td>
+                    <td><strong>${headNamePrev} Total</strong></td>
                     <td></td>
                     <td><strong>${totals.sanctioned_budget.toFixed(2)}</strong></td>
                     <td><strong>${totals.revised_estimate.toFixed(2)}</strong></td>
@@ -56,6 +56,7 @@ function populateRevisionReportTable(data, headNameTotals) {
                     <td></td>
                 `;
             }
+            // Update the previous head name
             headNamePrev = row.head_name;
         }
 
@@ -68,15 +69,16 @@ function populateRevisionReportTable(data, headNameTotals) {
         rowElement.innerHTML = `
             <td>${showDepartmentName ? row.department_name : ''}</td>
             <td>${showSchemeName ? row.scheme_name : ''}</td>
-            <td>${row.head_name}</td>
+            <td>${row.head_name}</td> <!-- Only show head_name here for the first row in each group -->
             <td>${row.soe_name}</td>
             <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
             <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
             <td>${parseFloat(row.excess || 0).toFixed(2)}</td>
             <td>${parseFloat(row.surrender || 0).toFixed(2)}</td>
-    `;
-    
+            <td>${new Date(row.last_change_date).toLocaleDateString()}</td>
+        `;
 
+        // Update the previous department, scheme, and head names
         departmentNamePrev = row.department_name;
         schemeNamePrev = row.scheme_name;
     });
@@ -99,10 +101,12 @@ function populateRevisionReportTable(data, headNameTotals) {
             <td><strong>${totals.revised_estimate.toFixed(2)}</strong></td>
             <td><strong>${totals.excess.toFixed(2)}</strong></td>
             <td><strong>${totals.surrender.toFixed(2)}</strong></td>
+            <td></td>
         `;
-
     }
 }
+
+
 
 // Function to export a table to Excel
 function exportToExcel(tableId, filename = 'excel_data') {
