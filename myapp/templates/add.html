@@ -23,7 +23,12 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="department_name">Department Name:</label>
-                    <input type="text" id="department_name" name="department_name" class="form-control" required>
+                    <select id="department_name" name="department_name" class="form-control" required>
+                        <option value="">Select Department</option>
+                        {% for department in departments %}
+                            <option value="{{ department }}">{{ department }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="head_name">Head Name:</label>
@@ -39,7 +44,12 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label for="soe_name">SOE Name:</label>
-                    <input type="text" id="soe_name" name="soe_name" class="form-control" required>
+                    <select id="soe_name" name="soe_name" class="form-control" required>
+                        <option value="">Select SOE</option>
+                        {% for soe in soes %}
+                            <option value="{{ soe }}">{{ soe }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
 

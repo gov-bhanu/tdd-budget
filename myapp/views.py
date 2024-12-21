@@ -161,9 +161,23 @@ def import_csv(request):
 
 
 
-
 def add_data(request):
     """Render the add form and handle new data submission."""
+    departments = ["Agriculture", "Allopathy", "Animal Husbandry", "Art & Culture", "Ayurveda", "Border Area Development Programme", "Child Welfare", "Civil Supplies", "Co-operation", 
+    "Dairy and Milk Supply", "Elementary Education", "Energy", "Excise and Taxation", "Fisheries", "Fire Services", "Forest", "General Administration", "Health and Family Welfare", 
+    "Horticulture", "Hortriculture", "Industry and Minerals", "Irrigation and Flood Control", "Judiciary", "Labour and Employment", "Medical Education and Research", 
+    "Mountaineering and Allied Sports", "Police Housing", "Planning Department", "Prison Department", "Public Works", "Rural Development", "Science Technology and Environment", 
+    "Secondary Education", "Special Nutrition Programme", "Social Welfare", "Town and Country Planning", "Transport", "University and Higher Education", "Vigilance Department", "Water Supply", 
+    "Water Supply and Sewerage", "Welfare of SCs/STs/OBCs", "Women and Child Development", "Youth Services and Sports"]
+
+    soes = [
+    "01-Salaries", "02-Wages", "03-Travel Expenses", "05-Office Expenses", "06-Medical Reimbursement", "07-Rent Rates and Taxes", "09-Advertising and Publicity", "10-Hospitality and Entertainment Expenses", 
+    "12-Professional & Special Services", "15-Training", "16-Social Security Pension", "20-Other Charges", "21-Maintenance", "29-Compensations", "30-Motor Vehicles (Outsourced Vehicles/Pol/Repairs)", 
+    "31-Machinery and Equipment", "33-Materials and Supplies", "37-Major Works", "40-Scholarships Stipends and Concessions", "40-Scholarships- Stipends and Concessions", 
+    "41-Grants-in-Aid General (Salary)", "42-Grants-in-Aid General (Non-Salary)", "42-Grants-in-Aid General (Non-Salary) SDG New_add", "43-Investment", "44-Grants-in-Aid for Capital Assets", 
+    "44-Grants-in-Aid for Capital Assets SDG New_add", "48-Loans", "62-Subsidy on Interests", "63-Subsidy", "64-Transfer Expenses", "65-Outsourcing Charges", "79-Suspense"]
+
+
     if request.method == 'POST':
         # Get form data from request
         department_name = request.POST.get('department_name')
@@ -197,8 +211,7 @@ def add_data(request):
         # Redirect to the home page or a success page
         return redirect('index')  # Make sure 'index' is the correct URL name
 
-    return render(request, 'add.html')  # Render the add form if GET request
-
+    return render(request, 'add.html', {'departments': departments, 'soes': soes})
 
 
 
