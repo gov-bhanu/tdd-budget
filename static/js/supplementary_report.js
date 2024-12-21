@@ -23,94 +23,71 @@ function fetchSupplementaryData() {
 
 
 
-
-
-function populateSupplementaryReportTable(data, headNameTotals) {
+function populateSupplementaryReportTable(data) {
     const supplementaryReportTableBody = document.getElementById('supplementaryReportTable').getElementsByTagName('tbody')[0];
     supplementaryReportTableBody.innerHTML = ''; // Clear previous table content
 
     // Sort the data by `head_name`
-    data.sort((a, b) => a.head_name.localeCompare(b.head_name));
+    data.sort((a, b) => (a.head_name || '').localeCompare(b.head_name || ''));
 
-    let headNamePrev = ''; // Track previous head name for grouping
-    let departmentNamePrev = ''; // Track previous department name for grouping
-    let schemeNamePrev = ''; // Track previous scheme name for grouping
+    let headNamePrev = '';
+    let departmentPrev = '';
+    let schemePrev = '';
+    let totalRowAdded = {}; // Object to track if total row has been added for a given head_name
 
-    // Loop through the data and populate the table
     data.forEach((row) => {
-        // Add head total row when head changes
-        if (row.head_name !== headNamePrev) {
-            if (headNamePrev !== '') {
-                const totals = headNameTotals[headNamePrev] || {
-                    sanctioned_budget: 0,
-                    revised_estimate: 0,
-                    excess: 0,
-                    surrender: 0,
-                    variation: 0,
-                };
+        if (!row) return; // Skip null/undefined rows
 
+        const {
+            department_name = '',
+            head_name = '',
+            scheme_name = '',
+            soe_name = '',
+            sanctioned_budget = 0,
+            revised_estimate = 0,
+            excess = 0,
+            surrender = 0,
+        } = row;
+
+        // Insert regular rows
+        if (!head_name.endsWith('Total')) {
+            supplementaryReportTableBody.insertRow().innerHTML = `
+                <td>${departmentPrev !== department_name ? department_name : ''}</td>
+                <td>${schemePrev !== scheme_name ? scheme_name : ''}</td>
+                <td>${headNamePrev !== head_name ? head_name : ''}</td>
+                <td>${soe_name}</td>
+                <td>${parseFloat(sanctioned_budget).toFixed(2)}</td>
+                <td>${parseFloat(revised_estimate).toFixed(2)}</td>
+                <td>${parseFloat(excess || 0).toFixed(2)}</td>
+                <td>${parseFloat(surrender || 0).toFixed(2)}</td>
+            `;
+        } else {
+            // If we encounter a row that is a total row for a head
+            // Prevent duplicate total rows for the same head_name
+            if (!totalRowAdded[head_name]) {
+                totalRowAdded[head_name] = true;
+
+                // Insert a summary row for the total row with no date
                 supplementaryReportTableBody.insertRow().innerHTML = `
                     <td></td>
                     <td></td>
-                    <td><strong>${headNamePrev} Total</strong></td>
+                    <td><strong>${head_name}</strong></td>
                     <td></td>
-                    <td><strong>${totals.sanctioned_budget.toFixed(2)}</strong></td>
-                    <td><strong>${totals.revised_estimate.toFixed(2)}</strong></td>
-                    <td><strong>${totals.excess.toFixed(2)}</strong></td>
-                    <td><strong>${totals.surrender.toFixed(2)}</strong></td>
-                    <td><strong>${totals.variation.toFixed(2)}</strong></td>
+                    <td>${parseFloat(sanctioned_budget).toFixed(2)}</td>
+                    <td>${parseFloat(revised_estimate).toFixed(2)}</td>
+                    <td>${parseFloat(excess).toFixed(2)}</td>
+                    <td>${parseFloat(surrender).toFixed(2)}</td>
                 `;
             }
-            // Update the previous head name
-            headNamePrev = row.head_name;
         }
 
-        // Show department_name and scheme_name only when they change
-        const showDepartmentName = row.department_name !== departmentNamePrev;
-        const showSchemeName = row.scheme_name !== schemeNamePrev;
-        
-        // Add the current row
-        const rowElement = supplementaryReportTableBody.insertRow();
-        rowElement.innerHTML = `
-            <td>${showDepartmentName ? row.department_name : ''}</td>
-            <td>${showSchemeName ? row.scheme_name : ''}</td>
-            <td>${row.head_name}</td>  <!-- Only show head_name here for the first row in each group -->
-            <td>${row.soe_name}</td>
-            <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
-            <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
-            <td>${parseFloat(row.excess || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.surrender || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.variation || 0).toFixed(2)}</td>
-        `;
-
-        // Update the previous department, scheme, and head names
-        departmentNamePrev = row.department_name;
-        schemeNamePrev = row.scheme_name;
+        // Track previous values to prevent duplicates in the next row
+        departmentPrev = department_name;
+        schemePrev = scheme_name;
+        headNamePrev = head_name;
     });
-
-    // Add the final head total
-    if (headNamePrev !== '') {
-        const totals = headNameTotals[headNamePrev] || {
-            sanctioned_budget: 0,
-            revised_estimate: 0,
-            excess: 0,
-            surrender: 0,
-            variation: 0,
-        };
-
-        supplementaryReportTableBody.insertRow().innerHTML = `
-            <td></td>
-            <td></td>
-            <td><strong>${headNamePrev} Total</strong></td>
-            <td></td>
-            <td><strong>${totals.sanctioned_budget.toFixed(2)}</strong></td>
-            <td><strong>${totals.revised_estimate.toFixed(2)}</strong></td>
-            <td><strong>${totals.excess.toFixed(2)}</strong></td>
-            <td><strong>${totals.surrender.toFixed(2)}</strong></td>
-            <td><strong>${totals.variation.toFixed(2)}</strong></td>
-        `;
-    }
 }
+
 
 
 
