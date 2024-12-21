@@ -361,6 +361,8 @@ def revision_report_view(request):
 
 from collections import defaultdict
 
+from collections import defaultdict
+
 def fetch_revision_data(request):
     try:
         start_date = request.GET.get('start_date')
@@ -387,21 +389,59 @@ def fetch_revision_data(request):
 
         data_list = list(data)
 
-        head_name_totals = defaultdict(lambda: defaultdict(float))
+        # Store totals for each head
+        head_name_totals = {}
+        current_head = None
 
-        def safe_float(value):
-            return float(value) if value is not None else 0.0
+        # Collect the data and calculate totals
+        result_data = []
 
         for row in data_list:
-            head_name_totals[row['head_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
-            head_name_totals[row['head_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
-            head_name_totals[row['head_name']]['excess'] += safe_float(row['excess'])
-            head_name_totals[row['head_name']]['surrender'] += safe_float(row['surrender'])
+            head_name = row['head_name']
+            # Initialize totals for new head if needed
+            if head_name != current_head:
+                if current_head:  # Add the previous head totals before the new head
+                    result_data.append({
+                        'head_name': f'{current_head} Total',
+                        'sanctioned_budget': head_name_totals[current_head]['sanctioned_budget'],
+                        'revised_estimate': head_name_totals[current_head]['revised_estimate'],
+                        'excess': head_name_totals[current_head]['excess'],
+                        'surrender': head_name_totals[current_head]['surrender'],
+                        'last_change_date': ''
+                    })
+
+                # Reset totals for new head
+                head_name_totals[head_name] = {
+                    'sanctioned_budget': 0.0,
+                    'revised_estimate': 0.0,
+                    'excess': 0.0,
+                    'surrender': 0.0,
+                }
+
+                current_head = head_name
+
+            # Add row to result data and aggregate totals
+            head_name_totals[head_name]['sanctioned_budget'] += float(row['sanctioned_budget'] or 0.0)
+            head_name_totals[head_name]['revised_estimate'] += float(row['revised_estimate'] or 0.0)
+            head_name_totals[head_name]['excess'] += float(row['excess'] or 0.0)
+            head_name_totals[head_name]['surrender'] += float(row['surrender'] or 0.0)
+
+            result_data.append(row)
+
+        # Add the final total for the last head
+        if current_head:
+            result_data.append({
+                'head_name': f'{current_head} Total',
+                'sanctioned_budget': head_name_totals[current_head]['sanctioned_budget'],
+                'revised_estimate': head_name_totals[current_head]['revised_estimate'],
+                'excess': head_name_totals[current_head]['excess'],
+                'surrender': head_name_totals[current_head]['surrender'],
+                'last_change_date': ''
+            })
 
         return JsonResponse({
             'status': 'success',
-            'data': data_list,
-            'head_name_totals': head_name_totals,
+            'data': result_data,
         })
 
     except Exception as e:
