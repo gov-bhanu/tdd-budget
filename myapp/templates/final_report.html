@@ -4,7 +4,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Department-wise final_report</title>
+    <title>Final Report</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,27 +16,73 @@
     <div class="container mt-4">
         <h1 class="text-center mb-4">Final Report</h1>
         <a href="/" class="btn btn-primary mb-4">Home</a>
+
+        <!-- Table for SOE Name Wise Totals -->
+        <h2>SOE Name Wise Totals</h2>
         <div class="table-responsive">
-            <table id="final_reportTable" class="table table-bordered table-striped table-hover">
+            <table id="soeTotalTable" class="table table-bordered table-striped table-hover">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Department Name</th>
-                        <th>Head Name</th>
-                        <th>Scheme Name</th>
                         <th>SOE Name</th>
                         <th>Sanctioned Budget (SB)</th>
                         <th>Revised Estimate (RE)</th>
-                        <th>In Divisible</th>
-                        <th>Divisible</th>
-                        <th>Kinnaur</th>
-                        <th>Lahaul</th>
-                        <th>Spiti</th>
-                        <th>Pangi</th>
-                        <th>Bharmaur</th>
+                        <th>Excess</th>
+                        <th>Surrender</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Content will be dynamically populated -->
+                    {% for soe_name, totals in soe_totals.items %}
+                        <tr>
+                            <td>{{ soe_name }}</td>
+                            <td>{{ totals.sanctioned_budget|floatformat:2 }}</td>
+                            <td>{{ totals.revised_estimate|floatformat:2 }}</td>
+                            <td>{{ totals.excess|floatformat:2 }}</td>
+                            <td>{{ totals.surrender|floatformat:2 }}</td>
+                        </tr>
+                    {% endfor %}
+                    <!-- Final Totals Row -->
+                    <tr class="font-weight-bold">
+                        <td>Total</td>
+                        <td>{{ total_sanctioned_budget_soe|floatformat:2 }}</td>
+                        <td>{{ total_revised_estimate_soe|floatformat:2 }}</td>
+                        <td>{{ total_excess_soe|floatformat:2 }}</td>
+                        <td>{{ total_surrender_soe|floatformat:2 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table for Department Wise Totals -->
+        <h2>Department Wise Totals</h2>
+        <div class="table-responsive">
+            <table id="departmentTotalTable" class="table table-bordered table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Department Name</th>
+                        <th>Sanctioned Budget (SB)</th>
+                        <th>Revised Estimate (RE)</th>
+                        <th>Excess</th>
+                        <th>Surrender</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for department_name, totals in department_totals.items %}
+                        <tr>
+                            <td>{{ department_name }}</td>
+                            <td>{{ totals.sanctioned_budget|floatformat:2 }}</td>
+                            <td>{{ totals.revised_estimate|floatformat:2 }}</td>
+                            <td>{{ totals.excess|floatformat:2 }}</td>
+                            <td>{{ totals.surrender|floatformat:2 }}</td>
+                        </tr>
+                    {% endfor %}
+                    <!-- Final Totals Row -->
+                    <tr class="font-weight-bold">
+                        <td>Total</td>
+                        <td>{{ total_sanctioned_budget_dept|floatformat:2 }}</td>
+                        <td>{{ total_revised_estimate_dept|floatformat:2 }}</td>
+                        <td>{{ total_excess_dept|floatformat:2 }}</td>
+                        <td>{{ total_surrender_dept|floatformat:2 }}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

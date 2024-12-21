@@ -1,143 +1,105 @@
-document.addEventListener("DOMContentLoaded", function() {
-    fetchData(); // Fetch data when the page loads
-});
+function populateFinalReport(data) {
+    const soeTotalTableBody = document.getElementById('soeTotalTable').getElementsByTagName('tbody')[0];
+    const departmentTotalTableBody = document.getElementById('departmentTotalTable').getElementsByTagName('tbody')[0];
 
-// Fetch data from the API
-function fetchData() {
-    fetch('/fetch-data/')
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                populatefinal_reportTable(data.data, data.department_totals, data.head_name_totals);
-            } else {
-                alert('Error fetching data: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error fetching data. Please check the console for details.');
-        });
-}
+    let soeTotals = {}; // To store totals by SOE name
+    let departmentTotals = {}; // To store totals by Department name
 
-// Populate the final_report table with data and totals
-function populatefinal_reportTable(data, departmentTotals, headNameTotals) {
-    const final_reportTableBody = document.getElementById('final_reportTable').getElementsByTagName('tbody')[0];
-    final_reportTableBody.innerHTML = '';  // Clear previous table content
+    // Loop through the data to accumulate totals by SOE and Department
+    data.forEach((row) => {
+        if (!row) return;
 
-    let departmentNamePrev = '';  // Track previous department name for grouping
-    let headNamePrev = '';  // Track previous head name for grouping
+        const {
+            department_name = '',
+            soe_name = '',
+            sanctioned_budget = 0,
+            revised_estimate = 0,
+            excess = 0,
+            surrender = 0,
+        } = row;
 
-    // Loop through the data and populate the table
-    data.forEach((row, index) => {
-        // Add department total row when department changes
-        if (row.department_name !== departmentNamePrev) {
-            if (departmentNamePrev !== '') {
-                // Add the department total row
-                final_reportTableBody.insertRow().innerHTML = `
-                    <td colspan="4"><strong>${departmentNamePrev} Total</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].revised_estimate.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].in_divisible.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].divisible.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].kinnaur.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].lahaul.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].spiti.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].pangi.toFixed(2)}</strong></td>
-                    <td><strong>${departmentTotals[departmentNamePrev].bharmaur.toFixed(2)}</strong></td>
-                `;
-            }
-            // Add the new department row
-            departmentNamePrev = row.department_name;
+        // Accumulate totals by SOE name
+        if (!soeTotals[soe_name]) {
+            soeTotals[soe_name] = {
+                sanctioned_budget: 0,
+                revised_estimate: 0,
+                excess: 0,
+                surrender: 0,
+            };
         }
+        soeTotals[soe_name].sanctioned_budget += parseFloat(sanctioned_budget);
+        soeTotals[soe_name].revised_estimate += parseFloat(revised_estimate);
+        soeTotals[soe_name].excess += parseFloat(excess || 0);
+        soeTotals[soe_name].surrender += parseFloat(surrender || 0);
 
-        // Add head total row when head changes
-        if (row.head_name !== headNamePrev) {
-            if (headNamePrev !== '') {
-                // Add the head total row
-                final_reportTableBody.insertRow().innerHTML = `
-                    <td colspan="4"><strong>${headNamePrev} Total</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].revised_estimate.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].in_divisible.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].divisible.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].kinnaur.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].lahaul.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].spiti.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].pangi.toFixed(2)}</strong></td>
-                    <td><strong>${headNameTotals[headNamePrev].bharmaur.toFixed(2)}</strong></td>
-                `;
-            }
-            // Add the new head row
-            headNamePrev = row.head_name;
+        // Accumulate totals by Department name
+        if (!departmentTotals[department_name]) {
+            departmentTotals[department_name] = {
+                sanctioned_budget: 0,
+                revised_estimate: 0,
+                excess: 0,
+                surrender: 0,
+            };
         }
+        departmentTotals[department_name].sanctioned_budget += parseFloat(sanctioned_budget);
+        departmentTotals[department_name].revised_estimate += parseFloat(revised_estimate);
+        departmentTotals[department_name].excess += parseFloat(excess || 0);
+        departmentTotals[department_name].surrender += parseFloat(surrender || 0);
+    });
 
-        // Add the current row
-        const rowElement = final_reportTableBody.insertRow();
-        rowElement.innerHTML = `
-            <td>${row.department_name}</td>
-            <td>${row.head_name}</td>
-            <td>${row.scheme_name}</td>
-            <td>${row.soe_name}</td>
-            <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
-            <td>${parseFloat(row.revised_estimate).toFixed(2)}</td>
-            <td>${parseFloat(row.in_divisible || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.divisible || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.kinnaur || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.lahaul || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.spiti || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.pangi || 0).toFixed(2)}</td>
-            <td>${parseFloat(row.bharmaur || 0).toFixed(2)}</td>
+    // Populate the SOE Name wise total table
+    Object.keys(soeTotals).forEach((soe_name) => {
+        const total = soeTotals[soe_name];
+        soeTotalTableBody.insertRow().innerHTML = `
+            <td>${soe_name}</td>
+            <td>${total.sanctioned_budget.toFixed(2)}</td>
+            <td>${total.revised_estimate.toFixed(2)}</td>
+            <td>${total.excess.toFixed(2)}</td>
+            <td>${total.surrender.toFixed(2)}</td>
         `;
     });
 
-    // Add final department total
-    final_reportTableBody.insertRow().innerHTML = `
-        <td colspan="4"><strong>${departmentNamePrev} Total</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].sanctioned_budget.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].revised_estimate.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].in_divisible.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].divisible.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].kinnaur.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].lahaul.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].spiti.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].pangi.toFixed(2)}</strong></td>
-        <td><strong>${departmentTotals[departmentNamePrev].bharmaur.toFixed(2)}</strong></td>
-    `;
+    // Populate the Department wise total table
+    Object.keys(departmentTotals).forEach((department_name) => {
+        const total = departmentTotals[department_name];
+        departmentTotalTableBody.insertRow().innerHTML = `
+            <td>${department_name}</td>
+            <td>${total.sanctioned_budget.toFixed(2)}</td>
+            <td>${total.revised_estimate.toFixed(2)}</td>
+            <td>${total.excess.toFixed(2)}</td>
+            <td>${total.surrender.toFixed(2)}</td>
+        `;
+    });
 }
 
+// Example data
+const data = [
+    {
+        department_name: 'Secondary Education',
+        soe_name: '2202-02-796-21-S00N',
+        sanctioned_budget: 12.00,
+        revised_estimate: 9.00,
+        excess: 0.00,
+        surrender: 3.00,
+    },
+    {
+        department_name: 'Secondary Education',
+        soe_name: '2202-02-796-21-S00N',
+        sanctioned_budget: 25.00,
+        revised_estimate: 28.00,
+        excess: 3.00,
+        surrender: 0.00,
+    },
+    {
+        department_name: 'Allopathy',
+        soe_name: '2210-06-796-19-S00N',
+        sanctioned_budget: 18.00,
+        revised_estimate: 17.00,
+        excess: 0.00,
+        surrender: 1.00,
+    },
+    // Add more rows as needed
+];
 
-
-
-// Export table data to Excel
-function exportToExcel() {
-    const table = document.getElementById('final_reportTable');  // Use your table ID
-    const rows = table.getElementsByTagName('tr');
-    const sheetData = [];
-    
-    // Get table header
-    const headers = [];
-    const headerCells = rows[0].getElementsByTagName('th');
-    for (let i = 0; i < headerCells.length; i++) {
-        headers.push(headerCells[i].textContent.trim());
-    }
-    sheetData.push(headers);
-
-    // Get table rows
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const cells = row.getElementsByTagName('td');
-        const rowData = [];
-        for (let j = 0; j < cells.length; j++) {
-            rowData.push(cells[j].textContent.trim());
-        }
-        sheetData.push(rowData);
-    }
-
-    // Create a workbook and a worksheet
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    XLSX.utils.book_append_sheet(wb, ws, "final_report Data");
-
-    // Export to Excel
-    XLSX.writeFile(wb, 'department_final_report.xlsx');
-}
+// Call the function to populate the final report
+populateFinalReport(data);

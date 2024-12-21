@@ -225,72 +225,97 @@ def add_data(request):
 
 
 
-# View to render the final_report page
-def final_report_view(request):
-    return render(request, 'final_report.html')
-# API to fetch data for the final_report table, including totals for each head_name and department_name
-def fetch_data(request):
-    try:
-        # Fetch all data from the database
-        data = DataRow.objects.all().values(
-            'department_name',
-            'head_name',
-            'scheme_name',
-            'soe_name',
-            'sanctioned_budget',
-            'revised_estimate',
-            'in_divisible',
-            'divisible',
-            'kinnaur',
-            'lahaul',
-            'spiti',
-            'pangi',
-            'bharmaur',
-        )
+from django.shortcuts import render
+from .models import DataRow
 
-        # Convert the QuerySet to a list of dictionaries
-        data_list = list(data)
+def final_report(request):
+    # Fetch data for generating the report
+    data = DataRow.objects.all().values(
+        'department_name', 
+        'head_name', 
+        'scheme_name', 
+        'soe_name',
+        'sanctioned_budget',
+        'revised_estimate',
+        'excess',
+        'surrender'
+    )
 
-        # Initialize total dictionaries for department and head name
-        department_totals = defaultdict(lambda: defaultdict(float))
-        head_name_totals = defaultdict(lambda: defaultdict(float))
+    # Calculate SOE and Department totals
+    soe_totals = {}
+    department_totals = {}
+    total_sanctioned_budget_soe = 0
+    total_revised_estimate_soe = 0
+    total_excess_soe = 0
+    total_surrender_soe = 0
 
-        # Function to safely convert to float, treating None as 0.0
-        def safe_float(value):
-            return float(value) if value is not None else 0.0
+    total_sanctioned_budget_dept = 0
+    total_revised_estimate_dept = 0
+    total_excess_dept = 0
+    total_surrender_dept = 0
 
-        # Calculate totals for each department and head_name
-        for row in data_list:
-            department_totals[row['department_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
-            department_totals[row['department_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
-            department_totals[row['department_name']]['in_divisible'] += safe_float(row['in_divisible'])
-            department_totals[row['department_name']]['divisible'] += safe_float(row['divisible'])
-            department_totals[row['department_name']]['kinnaur'] += safe_float(row['kinnaur'])
-            department_totals[row['department_name']]['lahaul'] += safe_float(row['lahaul'])
-            department_totals[row['department_name']]['spiti'] += safe_float(row['spiti'])
-            department_totals[row['department_name']]['pangi'] += safe_float(row['pangi'])
-            department_totals[row['department_name']]['bharmaur'] += safe_float(row['bharmaur'])
-            
-            head_name_totals[row['head_name']]['sanctioned_budget'] += safe_float(row['sanctioned_budget'])
-            head_name_totals[row['head_name']]['revised_estimate'] += safe_float(row['revised_estimate'])
-            head_name_totals[row['head_name']]['in_divisible'] += safe_float(row['in_divisible'])
-            head_name_totals[row['head_name']]['divisible'] += safe_float(row['divisible'])
-            head_name_totals[row['head_name']]['kinnaur'] += safe_float(row['kinnaur'])
-            head_name_totals[row['head_name']]['lahaul'] += safe_float(row['lahaul'])
-            head_name_totals[row['head_name']]['spiti'] += safe_float(row['spiti'])
-            head_name_totals[row['head_name']]['pangi'] += safe_float(row['pangi'])
-            head_name_totals[row['head_name']]['bharmaur'] += safe_float(row['bharmaur'])
+    for row in data:
+        # SOE Wise Total
+        soe_name = row['soe_name']
+        if soe_name not in soe_totals:
+            soe_totals[soe_name] = {
+                'sanctioned_budget': 0,
+                'revised_estimate': 0,
+                'excess': 0,
+                'surrender': 0,
+            }
+        soe_totals[soe_name]['sanctioned_budget'] += row['sanctioned_budget']
+        soe_totals[soe_name]['revised_estimate'] += row['revised_estimate']
+        soe_totals[soe_name]['excess'] += row['excess'] or 0
+        soe_totals[soe_name]['surrender'] += row['surrender'] or 0
 
-        # Return data along with totals
-        return JsonResponse({
-            'status': 'success',
-            'data': data_list,
-            'department_totals': department_totals,
-            'head_name_totals': head_name_totals
-        }, safe=False)
+        # Department Wise Total
+        department_name = row['department_name']
+        if department_name not in department_totals:
+            department_totals[department_name] = {
+                'sanctioned_budget': 0,
+                'revised_estimate': 0,
+                'excess': 0,
+                'surrender': 0,
+            }
+        department_totals[department_name]['sanctioned_budget'] += row['sanctioned_budget']
+        department_totals[department_name]['revised_estimate'] += row['revised_estimate']
+        department_totals[department_name]['excess'] += row['excess'] or 0
+        department_totals[department_name]['surrender'] += row['surrender'] or 0
 
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, safe=False)
+    # Calculate final totals for SOE and Department
+    for totals in soe_totals.values():
+        total_sanctioned_budget_soe += totals['sanctioned_budget']
+        total_revised_estimate_soe += totals['revised_estimate']
+        total_excess_soe += totals['excess']
+        total_surrender_soe += totals['surrender']
+
+    for totals in department_totals.values():
+        total_sanctioned_budget_dept += totals['sanctioned_budget']
+        total_revised_estimate_dept += totals['revised_estimate']
+        total_excess_dept += totals['excess']
+        total_surrender_dept += totals['surrender']
+
+    # Sort the dictionaries by keys
+    sorted_soe_totals = dict(sorted(soe_totals.items()))
+    sorted_department_totals = dict(sorted(department_totals.items()))
+
+    context = {
+        'data': data,
+        'soe_totals': sorted_soe_totals,
+        'department_totals': sorted_department_totals,
+        'total_sanctioned_budget_soe': total_sanctioned_budget_soe,
+        'total_revised_estimate_soe': total_revised_estimate_soe,
+        'total_excess_soe': total_excess_soe,
+        'total_surrender_soe': total_surrender_soe,
+        'total_sanctioned_budget_dept': total_sanctioned_budget_dept,
+        'total_revised_estimate_dept': total_revised_estimate_dept,
+        'total_excess_dept': total_excess_dept,
+        'total_surrender_dept': total_surrender_dept,
+    }
+
+    return render(request, 'final_report.html', context)
+
 
 
 
