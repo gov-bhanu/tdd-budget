@@ -22,7 +22,6 @@ function fetchSupplementaryData() {
 
 
 
-
 function populateSupplementaryReportTable(data) {
     const supplementaryReportTableBody = document.getElementById('supplementaryReportTable').getElementsByTagName('tbody')[0];
     supplementaryReportTableBody.innerHTML = ''; // Clear previous table content
@@ -34,6 +33,12 @@ function populateSupplementaryReportTable(data) {
     let departmentPrev = '';
     let schemePrev = '';
     let totalRowAdded = {}; // Object to track if total row has been added for a given head_name
+
+    // Variables to accumulate totals for each head_name
+    let accumulatedSanctionedBudget = 0;
+    let accumulatedRevisedEstimate = 0;
+    let accumulatedExcess = 0;
+    let accumulatedSurrender = 0;
 
     data.forEach((row) => {
         if (!row) return; // Skip null/undefined rows
@@ -49,8 +54,14 @@ function populateSupplementaryReportTable(data) {
             surrender = 0,
         } = row;
 
-        // Insert regular rows
+        // Insert regular rows (non-total)
         if (!head_name.endsWith('Total')) {
+            // Add values to the accumulation
+            accumulatedSanctionedBudget += parseFloat(sanctioned_budget);
+            accumulatedRevisedEstimate += parseFloat(revised_estimate);
+            accumulatedExcess += parseFloat(excess || 0);
+            accumulatedSurrender += parseFloat(surrender || 0);
+
             supplementaryReportTableBody.insertRow().innerHTML = `
                 <td>${departmentPrev !== department_name ? department_name : ''}</td>
                 <td>${schemePrev !== scheme_name ? scheme_name : ''}</td>
@@ -62,22 +73,27 @@ function populateSupplementaryReportTable(data) {
                 <td>${parseFloat(surrender || 0).toFixed(2)}</td>
             `;
         } else {
-            // If we encounter a row that is a total row for a head
-            // Prevent duplicate total rows for the same head_name
+            // If we encounter a total row, insert it after processing the regular rows
             if (!totalRowAdded[head_name]) {
                 totalRowAdded[head_name] = true;
 
-                // Insert a summary row for the total row with no date
+                // Insert a summary row for the total with accumulated totals
                 supplementaryReportTableBody.insertRow().innerHTML = `
                     <td></td>
                     <td></td>
                     <td><strong>${head_name}</strong></td>
                     <td></td>
-                    <td>${parseFloat(sanctioned_budget).toFixed(2)}</td>
-                    <td>${parseFloat(revised_estimate).toFixed(2)}</td>
-                    <td>${parseFloat(excess).toFixed(2)}</td>
-                    <td>${parseFloat(surrender).toFixed(2)}</td>
+                    <td><strong>${accumulatedSanctionedBudget.toFixed(2)}</strong></td>
+                    <td><strong>${accumulatedRevisedEstimate.toFixed(2)}</strong></td>
+                    <td><strong>${accumulatedExcess.toFixed(2)}</strong></td>
+                    <td><strong>${accumulatedSurrender.toFixed(2)}</strong></td>
                 `;
+
+                // Reset the accumulated totals for the next head_name group
+                accumulatedSanctionedBudget = 0;
+                accumulatedRevisedEstimate = 0;
+                accumulatedExcess = 0;
+                accumulatedSurrender = 0;
             }
         }
 

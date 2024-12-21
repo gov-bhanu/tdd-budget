@@ -33,6 +33,12 @@ function populateRevisionReportTable(data) {
     let departmentPrev = '';
     let schemePrev = '';
     let totalRowAdded = {}; // Object to track if total row has been added for a given head_name
+    let totals = {
+        sanctioned_budget: 0,
+        revised_estimate: 0,
+        excess: 0,
+        surrender: 0
+    };
 
     data.forEach((row) => {
         if (!row) return; // Skip null/undefined rows
@@ -49,8 +55,9 @@ function populateRevisionReportTable(data) {
             last_change_date = '',
         } = row;
 
-        // Insert regular rows
+        // If this is a new head_name (not a total row)
         if (!head_name.endsWith('Total')) {
+            // Insert regular rows
             revisionReportTableBody.insertRow().innerHTML = `
                 <td>${departmentPrev !== department_name ? department_name : ''}</td>
                 <td>${schemePrev !== scheme_name ? scheme_name : ''}</td>
@@ -62,24 +69,37 @@ function populateRevisionReportTable(data) {
                 <td>${parseFloat(surrender || 0).toFixed(2)}</td>
                 <td>${new Date(last_change_date).toLocaleDateString()}</td>
             `;
+
+            // Update the running totals for the current head_name
+            totals.sanctioned_budget += parseFloat(sanctioned_budget);
+            totals.revised_estimate += parseFloat(revised_estimate);
+            totals.excess += parseFloat(excess || 0);
+            totals.surrender += parseFloat(surrender || 0);
         } else {
-            // If we encounter a row that is a total row for a head
-            // Prevent duplicate total rows for the same head_name
+            // If it's a total row, add the total row only once for each head_name
             if (!totalRowAdded[head_name]) {
                 totalRowAdded[head_name] = true;
 
-                // Insert a summary row for the total row with no date
+                // Insert the total row for this head_name with the accumulated totals
                 revisionReportTableBody.insertRow().innerHTML = `
                     <td></td>
                     <td></td>
                     <td><strong>${head_name}</strong></td>
                     <td></td>
-                    <td>${parseFloat(sanctioned_budget).toFixed(2)}</td>
-                    <td>${parseFloat(revised_estimate).toFixed(2)}</td>
-                    <td>${parseFloat(excess).toFixed(2)}</td>
-                    <td>${parseFloat(surrender).toFixed(2)}</td>
+                    <td><strong>${totals.sanctioned_budget.toFixed(2)}</strong></td>
+                    <td><strong>${totals.revised_estimate.toFixed(2)}</strong></td>
+                    <td><strong>${totals.excess.toFixed(2)}</strong></td>
+                    <td><strong>${totals.surrender.toFixed(2)}</strong></td>
                     <td></td> <!-- Empty date for summary row -->
                 `;
+
+                // Reset the totals for the next head_name
+                totals = {
+                    sanctioned_budget: 0,
+                    revised_estimate: 0,
+                    excess: 0,
+                    surrender: 0
+                };
             }
         }
 
@@ -89,7 +109,6 @@ function populateRevisionReportTable(data) {
         headNamePrev = head_name;
     });
 }
-
 
 
 
