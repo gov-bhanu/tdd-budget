@@ -74,3 +74,19 @@ function populateFinalReport(data) {
 
 // Call the function to populate the final report
 populateFinalReport(data);
+
+
+
+
+// Function to export a table to Excel
+function exportToExcel(tableId, filename = 'excel_data') {
+    const table = document.getElementById(tableId);
+    if (!table) {
+        console.error(`Table with ID "${tableId}" not found.`);
+        return;
+    }
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.table_to_sheet(table);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    XLSX.writeFile(workbook, `${filename}.xlsx`);
+}
