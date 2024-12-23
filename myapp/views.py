@@ -223,11 +223,6 @@ def add_data(request):
 
 
 
-
-
-from django.shortcuts import render
-from .models import DataRow
-
 def final_report(request):
     # Fetch data for generating the report
     data = DataRow.objects.all().values(

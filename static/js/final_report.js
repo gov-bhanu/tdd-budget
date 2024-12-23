@@ -72,34 +72,5 @@ function populateFinalReport(data) {
     });
 }
 
-// Example data
-const data = [
-    {
-        department_name: 'Secondary Education',
-        soe_name: '2202-02-796-21-S00N',
-        sanctioned_budget: 12.00,
-        revised_estimate: 9.00,
-        excess: 0.00,
-        surrender: 3.00,
-    },
-    {
-        department_name: 'Secondary Education',
-        soe_name: '2202-02-796-21-S00N',
-        sanctioned_budget: 25.00,
-        revised_estimate: 28.00,
-        excess: 3.00,
-        surrender: 0.00,
-    },
-    {
-        department_name: 'Allopathy',
-        soe_name: '2210-06-796-19-S00N',
-        sanctioned_budget: 18.00,
-        revised_estimate: 17.00,
-        excess: 0.00,
-        surrender: 1.00,
-    },
-    // Add more rows as needed
-];
-
 // Call the function to populate the final report
 populateFinalReport(data);
