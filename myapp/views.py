@@ -8,7 +8,7 @@ from django.db.models import Sum
 import json
 import csv
 from django.core.serializers import serialize
-from django.db.models import F
+from django.db.models import F, Count
 from django.utils.dateparse import parse_date
 from django.utils.timezone import now, timedelta
 
@@ -223,100 +223,6 @@ def add_data(request):
 
 
 
-def final_report(request):
-    # Fetch data for generating the report
-    data = DataRow.objects.all().values(
-        'department_name', 
-        'head_name', 
-        'scheme_name', 
-        'soe_name',
-        'sanctioned_budget',
-        'revised_estimate',
-        'excess',
-        'surrender'
-    )
-
-    # Calculate SOE and Department totals
-    soe_totals = {}
-    department_totals = {}
-    total_sanctioned_budget_soe = 0
-    total_revised_estimate_soe = 0
-    total_excess_soe = 0
-    total_surrender_soe = 0
-
-    total_sanctioned_budget_dept = 0
-    total_revised_estimate_dept = 0
-    total_excess_dept = 0
-    total_surrender_dept = 0
-
-    for row in data:
-        # SOE Wise Total
-        soe_name = row['soe_name']
-        if soe_name not in soe_totals:
-            soe_totals[soe_name] = {
-                'sanctioned_budget': 0,
-                'revised_estimate': 0,
-                'excess': 0,
-                'surrender': 0,
-            }
-        soe_totals[soe_name]['sanctioned_budget'] += row['sanctioned_budget']
-        soe_totals[soe_name]['revised_estimate'] += row['revised_estimate']
-        soe_totals[soe_name]['excess'] += row['excess'] or 0
-        soe_totals[soe_name]['surrender'] += row['surrender'] or 0
-
-        # Department Wise Total
-        department_name = row['department_name']
-        if department_name not in department_totals:
-            department_totals[department_name] = {
-                'sanctioned_budget': 0,
-                'revised_estimate': 0,
-                'excess': 0,
-                'surrender': 0,
-            }
-        department_totals[department_name]['sanctioned_budget'] += row['sanctioned_budget']
-        department_totals[department_name]['revised_estimate'] += row['revised_estimate']
-        department_totals[department_name]['excess'] += row['excess'] or 0
-        department_totals[department_name]['surrender'] += row['surrender'] or 0
-
-    # Calculate final totals for SOE and Department
-    for totals in soe_totals.values():
-        total_sanctioned_budget_soe += totals['sanctioned_budget']
-        total_revised_estimate_soe += totals['revised_estimate']
-        total_excess_soe += totals['excess']
-        total_surrender_soe += totals['surrender']
-
-    for totals in department_totals.values():
-        total_sanctioned_budget_dept += totals['sanctioned_budget']
-        total_revised_estimate_dept += totals['revised_estimate']
-        total_excess_dept += totals['excess']
-        total_surrender_dept += totals['surrender']
-
-    # Sort the dictionaries by keys
-    sorted_soe_totals = dict(sorted(soe_totals.items()))
-    sorted_department_totals = dict(sorted(department_totals.items()))
-
-    context = {
-        'data': data,
-        'soe_totals': sorted_soe_totals,
-        'department_totals': sorted_department_totals,
-        'total_sanctioned_budget_soe': total_sanctioned_budget_soe,
-        'total_revised_estimate_soe': total_revised_estimate_soe,
-        'total_excess_soe': total_excess_soe,
-        'total_surrender_soe': total_surrender_soe,
-        'total_sanctioned_budget_dept': total_sanctioned_budget_dept,
-        'total_revised_estimate_dept': total_revised_estimate_dept,
-        'total_excess_dept': total_excess_dept,
-        'total_surrender_dept': total_surrender_dept,
-    }
-
-    return render(request, 'final_report.html', context)
-
-
-
-
-
-
-
 # View to render the supplementary report page
 def supplementary_report_view(request):
     return render(request, 'supplementary_report.html')
@@ -497,3 +403,168 @@ def fetch_revision_data(request):
             'status': 'error',
             'message': str(e),
         })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from django.db.models import Sum, F
+from django.db.models.functions import Substr, Length
+from django.shortcuts import render
+
+def final_report(request):
+    # Existing data fetch logic
+    data = DataRow.objects.all().values(
+        'department_name', 
+        'head_name', 
+        'scheme_name', 
+        'soe_name',
+        'sanctioned_budget',
+        'revised_estimate',
+        'excess',
+        'surrender'
+    )
+
+    # SOE and Department totals calculation
+    soe_totals = {}
+    department_totals = {}
+    total_sanctioned_budget_soe = 0
+    total_revised_estimate_soe = 0
+    total_excess_soe = 0
+    total_surrender_soe = 0
+    total_sanctioned_budget_dept = 0
+    total_revised_estimate_dept = 0
+    total_excess_dept = 0
+    total_surrender_dept = 0
+
+    for row in data:
+        # SOE Wise Total
+        soe_name = row['soe_name']
+        if soe_name not in soe_totals:
+            soe_totals[soe_name] = {
+                'sanctioned_budget': 0,
+                'revised_estimate': 0,
+                'excess': 0,
+                'surrender': 0,
+            }
+        soe_totals[soe_name]['sanctioned_budget'] += row['sanctioned_budget']
+        soe_totals[soe_name]['revised_estimate'] += row['revised_estimate']
+        soe_totals[soe_name]['excess'] += row['excess'] or 0
+        soe_totals[soe_name]['surrender'] += row['surrender'] or 0
+
+        # Department Wise Total
+        department_name = row['department_name']
+        if department_name not in department_totals:
+            department_totals[department_name] = {
+                'sanctioned_budget': 0,
+                'revised_estimate': 0,
+                'excess': 0,
+                'surrender': 0,
+            }
+        department_totals[department_name]['sanctioned_budget'] += row['sanctioned_budget']
+        department_totals[department_name]['revised_estimate'] += row['revised_estimate']
+        department_totals[department_name]['excess'] += row['excess'] or 0
+        department_totals[department_name]['surrender'] += row['surrender'] or 0
+
+    # Calculate final totals for SOE and Department
+    for totals in soe_totals.values():
+        total_sanctioned_budget_soe += totals['sanctioned_budget']
+        total_revised_estimate_soe += totals['revised_estimate']
+        total_excess_soe += totals['excess']
+        total_surrender_soe += totals['surrender']
+
+    for totals in department_totals.values():
+        total_sanctioned_budget_dept += totals['sanctioned_budget']
+        total_revised_estimate_dept += totals['revised_estimate']
+        total_excess_dept += totals['excess']
+        total_surrender_dept += totals['surrender']
+
+    # Sort the dictionaries by keys
+    sorted_soe_totals = dict(sorted(soe_totals.items()))
+    sorted_department_totals = dict(sorted(department_totals.items()))
+
+    # Totals report by head group (C, S, A)
+    head_groups = (
+        DataRow.objects
+        .annotate(head_name_length=Length('head_name'))
+        .annotate(head_group=Substr('head_name', F('head_name_length') - 3, 4))  # Extract last 4 characters
+        .values('head_group')
+        .annotate(
+            total_sanctioned_budget=Sum('sanctioned_budget'),
+            total_revised_estimate=Sum('revised_estimate'),
+            total_excess=Sum('excess'),
+            total_surrender=Sum('surrender')
+        )
+        .order_by('head_group')
+    )
+
+    # Separate groups based on the starting letter
+    group_c = [item for item in head_groups if item['head_group'].startswith('C')]
+    group_s = [item for item in head_groups if item['head_group'].startswith('S')]
+    group_a = [item for item in head_groups if item['head_group'].startswith('A')]
+
+    # Final totals for all groups
+    total_sanctioned_budget_a = sum(item['total_sanctioned_budget'] for item in group_a)
+    total_revised_estimate_a = sum(item['total_revised_estimate'] for item in group_a)
+    total_excess_a = sum(item['total_excess'] for item in group_a)
+    total_surrender_a = sum(item['total_surrender'] for item in group_a)
+
+    total_sanctioned_budget_c = sum(item['total_sanctioned_budget'] for item in group_c)
+    total_revised_estimate_c = sum(item['total_revised_estimate'] for item in group_c)
+    total_excess_c = sum(item['total_excess'] for item in group_c)
+    total_surrender_c = sum(item['total_surrender'] for item in group_c)
+
+    total_sanctioned_budget_s = sum(item['total_sanctioned_budget'] for item in group_s)
+    total_revised_estimate_s = sum(item['total_revised_estimate'] for item in group_s)
+    total_excess_s = sum(item['total_excess'] for item in group_s)
+    total_surrender_s = sum(item['total_surrender'] for item in group_s)
+
+    # Final totals for all groups (A, C, S)
+    final_total_sanctioned_budget = total_sanctioned_budget_a + total_sanctioned_budget_c + total_sanctioned_budget_s
+    final_total_revised_estimate = total_revised_estimate_a + total_revised_estimate_c + total_revised_estimate_s
+    final_total_excess = total_excess_a + total_excess_c + total_excess_s
+    final_total_surrender = total_surrender_a + total_surrender_c + total_surrender_s
+
+    context = {
+        'data': data,
+        'soe_totals': sorted_soe_totals,
+        'department_totals': sorted_department_totals,
+        'total_sanctioned_budget_soe': total_sanctioned_budget_soe,
+        'total_revised_estimate_soe': total_revised_estimate_soe,
+        'total_excess_soe': total_excess_soe,
+        'total_surrender_soe': total_surrender_soe,
+        'total_sanctioned_budget_dept': total_sanctioned_budget_dept,
+        'total_revised_estimate_dept': total_revised_estimate_dept,
+        'total_excess_dept': total_excess_dept,
+        'total_surrender_dept': total_surrender_dept,
+        'group_c': group_c,
+        'group_s': group_s,
+        'group_a': group_a,
+        'total_sanctioned_budget_a': total_sanctioned_budget_a,
+        'total_revised_estimate_a': total_revised_estimate_a,
+        'total_excess_a': total_excess_a,
+        'total_surrender_a': total_surrender_a,
+        'total_sanctioned_budget_c': total_sanctioned_budget_c,
+        'total_revised_estimate_c': total_revised_estimate_c,
+        'total_excess_c': total_excess_c,
+        'total_surrender_c': total_surrender_c,
+        'total_sanctioned_budget_s': total_sanctioned_budget_s,
+        'total_revised_estimate_s': total_revised_estimate_s,
+        'total_excess_s': total_excess_s,
+        'total_surrender_s': total_surrender_s,
+        'final_total_sanctioned_budget': final_total_sanctioned_budget,
+        'final_total_revised_estimate': final_total_revised_estimate,
+        'final_total_excess': final_total_excess,
+        'final_total_surrender': final_total_surrender,
+    }
+
+    return render(request, 'final_report.html', context)

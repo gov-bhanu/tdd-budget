@@ -10,7 +10,6 @@ urlpatterns = [
     path('update-revised-estimate/', views.update_revised_estimate, name='update_revised_estimate'),
     path('add/', views.add_data, name='add_data'),  # New URL for adding data
     path("import_csv/", views.import_csv, name="import_csv"),
-    
     path('supplementary_report/', views.supplementary_report_view, name='supplementary_report'),
     path('fetch-supplementary-data/', views.fetch_supplementary_data, name='fetch_supplementary_data'),
     path('changes_report/', views.revision_report_view, name='revision_report'),
