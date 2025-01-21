@@ -109,8 +109,9 @@ function populateSOETable(filteredData) {
         <td><input type="number" value="${pangi}" class="expandable-input" /></td>
         <td><input type="number" value="${bharmaur}" class="expandable-input" /></td>
         <td>
-            <button onclick="updateRevisedEstimate('${uniqueSearch}', this)">Update</button>
+            <button class="btn btn-success" id="soeTable_Button" onclick="updateRevisedEstimate('${uniqueSearch}', this)">Update</button>
         </td>
+
     `;
     });
 }

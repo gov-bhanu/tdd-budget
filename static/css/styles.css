@@ -17,7 +17,7 @@ body {
 /* Responsive Max-Width for Large Screens */
 @media (min-width: 1200px) {
     .container, .container-lg, .container-md, .container-sm, .container-xl {
-        max-width: 2000px;
+        max-width: 2100px;
     }
 }
 
@@ -44,7 +44,7 @@ table {
     border-collapse: collapse;
     border-radius: 12px; /* Rounded corners for the entire table */
     overflow: hidden; /* Ensure rounded corners are applied properly */
-    box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 table th, table td {
@@ -72,7 +72,7 @@ table tr:nth-child(odd) {
 /* Table Input Fields */
 table td input {
     font-size: 12px; /* Slightly reduced font size for input fields */
-    width: 100%; /* Ensure inputs take full width */
+    width: 100%; /* Ensure inputs take full width of the column */
     padding: 5px;
     box-sizing: border-box; /* Maintain consistent width calculation */
 }
@@ -111,7 +111,7 @@ table td input {
 /* Add specific styling for "In Divisible" column */
 #soeDetails table#soeTable th:nth-child(5), /* In Divisible */
 #soeDetails table#soeTable td:nth-child(5) input { /* In Divisible inputs */
-    width: 6em; /* Adjust as needed for input size */
+    width: 10em; /* Adjust as needed for input size */
     padding: 2px;
     font-size: 12px;
     box-sizing: border-box;
@@ -131,7 +131,7 @@ table td input {
 #soeDetails table#soeTable td:nth-child(9) input, /* Spiti */
 #soeDetails table#soeTable td:nth-child(10) input, /* Pangi */
 #soeDetails table#soeTable td:nth-child(11) input { /* Bharmaur */
-    width: 5em;
+    width: 100%; /* Ensure it spans the width of the table cell */
     padding: 2px;
     font-size: 12px; /* Reduced font size */
     box-sizing: border-box;
@@ -171,16 +171,19 @@ table td input {
     }
 }
 
-table th, 
-table td {
-    text-align: center; /* Horizontal alignment: center */
-    vertical-align: middle; /* Vertical alignment: middle */
-}
-
 /* Table Container */
 .table-container {
-    /* display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap; */
     gap: 20px; /* Adds spacing between the tables */
+}
+
+/* Expandable Input Styling */
+.expandable-input {
+    width: 100%; /* Ensure it spans the width of the table cell */
+    border-radius: 6px; /* Rounded corners */
+    border: 2px solid #bebebe; /* Thicker border */
+    text-align: center; /* Center the text inside the input */
+    color: #221e1e;
+    font-weight: bold; /* Optional: bold text */
+    padding: 5px; /* Padding for the input */
+    box-sizing: border-box; /* Include padding in width calculation */
 }
