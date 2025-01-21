@@ -533,7 +533,65 @@ def final_report(request):
     final_total_revised_estimate = total_revised_estimate_a + total_revised_estimate_c + total_revised_estimate_s
     final_total_excess = total_excess_a + total_excess_c + total_excess_s
     final_total_surrender = total_surrender_a + total_surrender_c + total_surrender_s
+    # Group data by Head Category (first 4 characters of head_name)
+    head_category_totals = (
+        DataRow.objects
+        .annotate(head_category=Substr('head_name', 1, 4))  # Extract first 4 characters
+        .values('head_category')
+        .annotate(
+            sanctioned_budget=Sum('sanctioned_budget'),
+            revised_estimate=Sum('revised_estimate'),
+            excess=Sum('excess'),
+            surrender=Sum('surrender')
+        )
+        .order_by('head_category')
+    )
+    # Calculate total values for the head_category_totals
+    total_sanctioned_budget_head_category = sum(item['sanctioned_budget'] for item in head_category_totals)
+    total_revised_estimate_head_category = sum(item['revised_estimate'] for item in head_category_totals)
+    total_excess_head_category = sum(item['excess'] for item in head_category_totals)
+    total_surrender_head_category = sum(item['surrender'] for item in head_category_totals)
 
+    # Group data by Head Category (first 7 characters of head_name)
+    head_category_totals_7 = (
+        DataRow.objects
+        .annotate(head_category_7=Substr('head_name', 1, 7))  # Extract first 7 characters
+        .values('head_category_7')
+        .annotate(
+            sanctioned_budget=Sum('sanctioned_budget'),
+            revised_estimate=Sum('revised_estimate'),
+            excess=Sum('excess'),
+            surrender=Sum('surrender')
+        )
+        .order_by('head_category_7')
+    )
+
+    # Group data by Head Category (first 11 characters of head_name)
+    head_category_totals_11 = (
+        DataRow.objects
+        .annotate(head_category_11=Substr('head_name', 1, 11))  # Extract first 11 characters
+        .values('head_category_11')
+        .annotate(
+            sanctioned_budget=Sum('sanctioned_budget'),
+            revised_estimate=Sum('revised_estimate'),
+            excess=Sum('excess'),
+            surrender=Sum('surrender')
+        )
+        .order_by('head_category_11')
+    )
+
+    # Calculate totals for the first 7 characters group
+    total_sanctioned_budget_head_category_7 = sum(item['sanctioned_budget'] for item in head_category_totals_7)
+    total_revised_estimate_head_category_7 = sum(item['revised_estimate'] for item in head_category_totals_7)
+    total_excess_head_category_7 = sum(item['excess'] for item in head_category_totals_7)
+    total_surrender_head_category_7 = sum(item['surrender'] for item in head_category_totals_7)
+
+    # Calculate totals for the first 11 characters group
+    total_sanctioned_budget_head_category_11 = sum(item['sanctioned_budget'] for item in head_category_totals_11)
+    total_revised_estimate_head_category_11 = sum(item['revised_estimate'] for item in head_category_totals_11)
+    total_excess_head_category_11 = sum(item['excess'] for item in head_category_totals_11)
+    total_surrender_head_category_11 = sum(item['surrender'] for item in head_category_totals_11)
+    
     context = {
         'data': data,
         'soe_totals': sorted_soe_totals,
@@ -565,6 +623,22 @@ def final_report(request):
         'final_total_revised_estimate': final_total_revised_estimate,
         'final_total_excess': final_total_excess,
         'final_total_surrender': final_total_surrender,
+        'head_category_totals': head_category_totals,
+        'total_sanctioned_budget_head_category': total_sanctioned_budget_head_category,
+        'total_revised_estimate_head_category': total_revised_estimate_head_category,
+        'total_excess_head_category': total_excess_head_category,
+        'total_surrender_head_category': total_surrender_head_category,
+        'head_category_totals_7': head_category_totals_7,
+        'head_category_totals_11': head_category_totals_11,
+        'total_sanctioned_budget_head_category_7': total_sanctioned_budget_head_category_7,
+        'total_revised_estimate_head_category_7': total_revised_estimate_head_category_7,
+        'total_excess_head_category_7': total_excess_head_category_7,
+        'total_surrender_head_category_7': total_surrender_head_category_7,
+        'total_sanctioned_budget_head_category_11': total_sanctioned_budget_head_category_11,
+        'total_revised_estimate_head_category_11': total_revised_estimate_head_category_11,
+        'total_excess_head_category_11': total_excess_head_category_11,
+        'total_surrender_head_category_11': total_surrender_head_category_11,
     }
+
 
     return render(request, 'final_report.html', context)

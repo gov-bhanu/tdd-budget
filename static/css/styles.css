@@ -11,7 +11,6 @@ body {
     background: white;
     padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
 }
 
@@ -43,12 +42,15 @@ table {
     width: 100%;
     margin-bottom: 20px;
     border-collapse: collapse;
+    border-radius: 12px; /* Rounded corners for the entire table */
+    overflow: hidden; /* Ensure rounded corners are applied properly */
+    box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1);
 }
 
 table th, table td {
-    font-size: 12px; /* Reduced table font size */
+    font-size: 14px; /* Slightly larger font size */
     text-align: center;
-    padding: 8px;
+    padding: 10px 15px; /* Adjusted padding, keeping top/bottom padding */
     border: 1px solid #ddd;
     white-space: nowrap; /* Prevent wrapping */
 }
@@ -60,15 +62,18 @@ table th {
 }
 
 table tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #f9f9f9; /* Very light grey for alternating rows */
+}
+
+table tr:nth-child(odd) {
+    background-color: white; /* White for alternating rows */
 }
 
 /* Table Input Fields */
 table td input {
-    font-size: 12px; /* Reduced font size for input fields */
-    width: auto;
-    max-width: 100%;
-    padding: 4px;
+    font-size: 12px; /* Slightly reduced font size for input fields */
+    width: 100%; /* Ensure inputs take full width */
+    padding: 5px;
     box-sizing: border-box; /* Maintain consistent width calculation */
 }
 
@@ -78,7 +83,6 @@ table td input {
     padding: 6px 12px; /* Adjusted padding */
     cursor: pointer;
 }
-
 
 /* Inline Messages */
 .inline-message {
@@ -96,8 +100,6 @@ table td input {
 }
 
 /* SOE Table Specific Styling */
-/* SOE Table Specific Styling */
-/* #soeDetails table#soeTable th:nth-child(5), Revised Estimate */
 #soeDetails table#soeTable th:nth-child(7), /* Kinnaur */
 #soeDetails table#soeTable th:nth-child(8), /* Lahaul */
 #soeDetails table#soeTable th:nth-child(9), /* Spiti */
@@ -114,7 +116,6 @@ table td input {
     font-size: 12px;
     box-sizing: border-box;
 }
-
 
 /* Specific Styling for SOE Table */
 #soeDetails table#soeTable th,
@@ -135,6 +136,7 @@ table td input {
     font-size: 12px; /* Reduced font size */
     box-sizing: border-box;
 }
+
 /* Specific Styling for Scheme Name Column */
 #dataTable td:nth-child(3), /* Scheme Name Column */
 #dataTable th:nth-child(3) {
@@ -152,7 +154,6 @@ table td input {
     text-overflow: ellipsis; /* Add ellipsis for clipped text */
     white-space: nowrap; /* Prevent wrapping */
 }
-
 
 /* Responsive Adjustments */
 @media (max-width: 576px) {
@@ -174,4 +175,12 @@ table th,
 table td {
     text-align: center; /* Horizontal alignment: center */
     vertical-align: middle; /* Vertical alignment: middle */
+}
+
+/* Table Container */
+.table-container {
+    /* display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; */
+    gap: 20px; /* Adds spacing between the tables */
 }

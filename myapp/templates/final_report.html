@@ -248,8 +248,112 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
+            <!-- Head Category Tables in a Row -->
+            <h2>Head Category Totals</h2>
+            <div class="table-container d-flex">
+                <!-- Head Category Table -->
+                <div class="table-responsive">
+                    <table id="headCategoryTable" class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Head Category</th>
+                                <th>Sanctioned Budget</th>
+                                <th>Revised Estimate</th>
+                                <th>Excess</th>
+                                <th>Surrender</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in head_category_totals %}
+                            <tr>
+                                <td>{{ item.head_category }}</td>
+                                <td>{{ item.sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ item.revised_estimate|floatformat:2 }}</td>
+                                <td>{{ item.excess|floatformat:2 }}</td>
+                                <td>{{ item.surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row -->
+                            <tr class="font-weight-bold">
+                                <td><strong>Total</strong></td>
+                                <td>{{ total_sanctioned_budget_head_category|floatformat:2 }}</td>
+                                <td>{{ total_revised_estimate_head_category|floatformat:2 }}</td>
+                                <td>{{ total_excess_head_category|floatformat:2 }}</td>
+                                <td>{{ total_surrender_head_category|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Head Category Table (First 7 Characters) -->
+                <div class="table-responsive">
+                    <table id="headCategoryTable7" class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Head Category</th>
+                                <th>Sanctioned Budget</th>
+                                <th>Revised Estimate</th>
+                                <th>Excess</th>
+                                <th>Surrender</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in head_category_totals_7 %}
+                            <tr>
+                                <td>{{ item.head_category_7 }}</td>
+                                <td>{{ item.sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ item.revised_estimate|floatformat:2 }}</td>
+                                <td>{{ item.excess|floatformat:2 }}</td>
+                                <td>{{ item.surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row -->
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td>{{ total_sanctioned_budget_head_category_7|floatformat:2 }}</td>
+                                <td>{{ total_revised_estimate_head_category_7|floatformat:2 }}</td>
+                                <td>{{ total_excess_head_category_7|floatformat:2 }}</td>
+                                <td>{{ total_surrender_head_category_7|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Head Category Table (First 11 Characters) -->
+                <div class="table-responsive">
+                    <table id="headCategoryTable11" class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Head Category</th>
+                                <th>Sanctioned Budget</th>
+                                <th>Revised Estimate</th>
+                                <th>Excess</th>
+                                <th>Surrender</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in head_category_totals_11 %}
+                            <tr>
+                                <td>{{ item.head_category_11 }}</td>
+                                <td>{{ item.sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ item.revised_estimate|floatformat:2 }}</td>
+                                <td>{{ item.excess|floatformat:2 }}</td>
+                                <td>{{ item.surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row -->
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td>{{ total_sanctioned_budget_head_category_11|floatformat:2 }}</td>
+                                <td>{{ total_revised_estimate_head_category_11|floatformat:2 }}</td>
+                                <td>{{ total_excess_head_category_11|floatformat:2 }}</td>
+                                <td>{{ total_surrender_head_category_11|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
 </body>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
