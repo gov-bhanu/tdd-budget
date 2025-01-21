@@ -180,7 +180,7 @@ table td input {
 .expandable-input {
     width: 100%; /* Ensure it spans the width of the table cell */
     border-radius: 6px; /* Rounded corners */
-    border: 2px solid #bebebe; /* Thicker border */
+    border: 1px solid #bebebe; /* Thicker border */
     text-align: center; /* Center the text inside the input */
     color: #221e1e;
     font-weight: bold; /* Optional: bold text */
