@@ -21,9 +21,11 @@ class DataRowAdmin(admin.ModelAdmin):
         'pangi',
         'bharmaur',
         'last_change_date',
+        'head_type'
     )
     search_fields = ('head_name', 'soe_name')  # Remove unique_search from search_fields
     list_filter = ('head_name',)
+    readonly_fields = ('head_type',)  # Add head_type as a readonly field
 
     # Custom method to display revised_estimate
     def revised_estimate_display(self, obj):

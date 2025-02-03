@@ -6,6 +6,7 @@ class DataRow(models.Model):
     # department_code = models.CharField(max_length=100)
     department_name = models.CharField(max_length=100)
     head_name = models.CharField(max_length=100)
+    head_type = models.CharField(max_length=10, editable=False)
     scheme_name = models.CharField(max_length=150)
     soe_name = models.CharField(max_length=100)
     sanctioned_budget = models.FloatField(null=True, blank=True)
@@ -37,6 +38,18 @@ class DataRow(models.Model):
 
     
     def save(self, *args, **kwargs):
+        # Auto-assign head_type based on head_name's first 4 characters
+        try:
+            head_code = int(self.head_name[:4])
+            if 2053 <= head_code <= 3456:
+                self.head_type = "Revenue"
+            elif 4055 <= head_code <= 5475:
+                self.head_type = "Capital"
+            else:
+                self.head_type = "Loan"
+        except ValueError:
+            self.head_type = "Loan"  # Default if conversion fails
+
         # Ensure that the fields are cast to float, defaulting to 0 if they are None or empty
         self.divisible = sum(filter(None, [
             float(self.kinnaur or 0),
@@ -46,7 +59,7 @@ class DataRow(models.Model):
             float(self.bharmaur or 0)
         ]))
 
-        # Ensure that in_divisible and revised_estimate are treated as floats
+        # Ensure that in_divisible and revised_estimate are treated as floats, # Calculate revised estimate
         self.revised_estimate = sum(filter(None, [
             float(self.in_divisible or 0),
             self.divisible  # already a float value

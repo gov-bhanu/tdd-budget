@@ -11,6 +11,9 @@ from django.core.serializers import serialize
 from django.db.models import F, Count
 from django.utils.dateparse import parse_date
 from django.utils.timezone import now, timedelta
+from django.db.models import Sum, F
+from django.db.models.functions import Substr, Length
+from django.shortcuts import render
 
 
 def index(request):
@@ -412,15 +415,6 @@ def fetch_revision_data(request):
 
 
 
-
-
-
-
-
-from django.db.models import Sum, F
-from django.db.models.functions import Substr, Length
-from django.shortcuts import render
-
 def final_report(request):
     # Existing data fetch logic
     data = DataRow.objects.all().values(
@@ -492,47 +486,6 @@ def final_report(request):
     sorted_soe_totals = dict(sorted(soe_totals.items()))
     sorted_department_totals = dict(sorted(department_totals.items()))
 
-    # Totals report by head group (C, S, A)
-    head_groups = (
-        DataRow.objects
-        .annotate(head_name_length=Length('head_name'))
-        .annotate(head_group=Substr('head_name', F('head_name_length') - 3, 4))  # Extract last 4 characters
-        .values('head_group')
-        .annotate(
-            total_sanctioned_budget=Sum('sanctioned_budget'),
-            total_revised_estimate=Sum('revised_estimate'),
-            total_excess=Sum('excess'),
-            total_surrender=Sum('surrender')
-        )
-        .order_by('head_group')
-    )
-
-    # Separate groups based on the starting letter
-    group_c = [item for item in head_groups if item['head_group'].startswith('C')]
-    group_s = [item for item in head_groups if item['head_group'].startswith('S')]
-    group_a = [item for item in head_groups if item['head_group'].startswith('A')]
-
-    # Final totals for all groups
-    total_sanctioned_budget_a = sum(item['total_sanctioned_budget'] for item in group_a)
-    total_revised_estimate_a = sum(item['total_revised_estimate'] for item in group_a)
-    total_excess_a = sum(item['total_excess'] for item in group_a)
-    total_surrender_a = sum(item['total_surrender'] for item in group_a)
-
-    total_sanctioned_budget_c = sum(item['total_sanctioned_budget'] for item in group_c)
-    total_revised_estimate_c = sum(item['total_revised_estimate'] for item in group_c)
-    total_excess_c = sum(item['total_excess'] for item in group_c)
-    total_surrender_c = sum(item['total_surrender'] for item in group_c)
-
-    total_sanctioned_budget_s = sum(item['total_sanctioned_budget'] for item in group_s)
-    total_revised_estimate_s = sum(item['total_revised_estimate'] for item in group_s)
-    total_excess_s = sum(item['total_excess'] for item in group_s)
-    total_surrender_s = sum(item['total_surrender'] for item in group_s)
-
-    # Final totals for all groups (A, C, S)
-    final_total_sanctioned_budget = total_sanctioned_budget_a + total_sanctioned_budget_c + total_sanctioned_budget_s
-    final_total_revised_estimate = total_revised_estimate_a + total_revised_estimate_c + total_revised_estimate_s
-    final_total_excess = total_excess_a + total_excess_c + total_excess_s
-    final_total_surrender = total_surrender_a + total_surrender_c + total_surrender_s
     # Group data by Head Category (first 4 characters of head_name)
     head_category_totals = (
         DataRow.objects
@@ -586,16 +539,106 @@ def final_report(request):
     total_excess_head_category_7 = sum(item['excess'] for item in head_category_totals_7)
     total_surrender_head_category_7 = sum(item['surrender'] for item in head_category_totals_7)
 
-    # Calculate totals for the first 11 characters group
-    total_sanctioned_budget_head_category_11 = sum(item['sanctioned_budget'] for item in head_category_totals_11)
-    total_revised_estimate_head_category_11 = sum(item['revised_estimate'] for item in head_category_totals_11)
-    total_excess_head_category_11 = sum(item['excess'] for item in head_category_totals_11)
-    total_surrender_head_category_11 = sum(item['surrender'] for item in head_category_totals_11)
-    
     context = {
         'data': data,
         'soe_totals': sorted_soe_totals,
         'department_totals': sorted_department_totals,
+        'total_sanctioned_budget_soe': total_sanctioned_budget_soe,
+        'total_revised_estimate_soe': total_revised_estimate_soe,
+        'total_excess_soe': total_excess_soe,
+        'total_surrender_soe': total_surrender_soe,
+        'total_sanctioned_budget_dept': total_sanctioned_budget_dept,
+        'total_revised_estimate_dept': total_revised_estimate_dept,
+        'total_excess_dept': total_excess_dept,
+        'total_surrender_dept': total_surrender_dept,
+        'head_category_totals': head_category_totals,
+        'total_sanctioned_budget_head_category': total_sanctioned_budget_head_category,
+        'total_revised_estimate_head_category': total_revised_estimate_head_category,
+        'total_excess_head_category': total_excess_head_category,
+        'total_surrender_head_category': total_surrender_head_category,
+        'head_category_totals_7': head_category_totals_7,
+        'head_category_totals_11': head_category_totals_11,
+        'total_sanctioned_budget_head_category_7': total_sanctioned_budget_head_category_7,
+        'total_revised_estimate_head_category_7': total_revised_estimate_head_category_7,
+        'total_excess_head_category_7': total_excess_head_category_7,
+        'total_surrender_head_category_7': total_surrender_head_category_7,
+    }
+
+
+    return render(request, 'final_report.html', context)
+
+
+
+
+
+def head_summary(request):
+    # Existing data fetch logic
+    data = DataRow.objects.all().values(
+        'department_name', 
+        'head_name', 
+        'scheme_name', 
+        'soe_name',
+        'sanctioned_budget',
+        'revised_estimate',
+        'excess',
+        'surrender'
+    )
+
+    # SOE and Department totals calculation
+    total_sanctioned_budget_soe = 0
+    total_revised_estimate_soe = 0
+    total_excess_soe = 0
+    total_surrender_soe = 0
+    total_sanctioned_budget_dept = 0
+    total_revised_estimate_dept = 0
+    total_excess_dept = 0
+    total_surrender_dept = 0
+
+    # Totals report by head group (C, S, A)
+    head_groups = (
+        DataRow.objects
+        .annotate(head_name_length=Length('head_name'))
+        .annotate(head_group=Substr('head_name', F('head_name_length') - 3, 4))  # Extract last 4 characters
+        .values('head_group')
+        .annotate(
+            total_sanctioned_budget=Sum('sanctioned_budget'),
+            total_revised_estimate=Sum('revised_estimate'),
+            total_excess=Sum('excess'),
+            total_surrender=Sum('surrender')
+        )
+        .order_by('head_group')
+    )
+
+    # Separate groups based on the starting letter
+    group_c = [item for item in head_groups if item['head_group'].startswith('C')]
+    group_s = [item for item in head_groups if item['head_group'].startswith('S')]
+    group_a = [item for item in head_groups if item['head_group'].startswith('A')]
+
+    # Final totals for all groups
+    total_sanctioned_budget_a = sum(item['total_sanctioned_budget'] for item in group_a)
+    total_revised_estimate_a = sum(item['total_revised_estimate'] for item in group_a)
+    total_excess_a = sum(item['total_excess'] for item in group_a)
+    total_surrender_a = sum(item['total_surrender'] for item in group_a)
+
+    total_sanctioned_budget_c = sum(item['total_sanctioned_budget'] for item in group_c)
+    total_revised_estimate_c = sum(item['total_revised_estimate'] for item in group_c)
+    total_excess_c = sum(item['total_excess'] for item in group_c)
+    total_surrender_c = sum(item['total_surrender'] for item in group_c)
+
+    total_sanctioned_budget_s = sum(item['total_sanctioned_budget'] for item in group_s)
+    total_revised_estimate_s = sum(item['total_revised_estimate'] for item in group_s)
+    total_excess_s = sum(item['total_excess'] for item in group_s)
+    total_surrender_s = sum(item['total_surrender'] for item in group_s)
+
+    # Final totals for all groups (A, C, S)
+    final_total_sanctioned_budget = total_sanctioned_budget_a + total_sanctioned_budget_c + total_sanctioned_budget_s
+    final_total_revised_estimate = total_revised_estimate_a + total_revised_estimate_c + total_revised_estimate_s
+    final_total_excess = total_excess_a + total_excess_c + total_excess_s
+    final_total_surrender = total_surrender_a + total_surrender_c + total_surrender_s
+    
+
+    context = {
+        'data': data,
         'total_sanctioned_budget_soe': total_sanctioned_budget_soe,
         'total_revised_estimate_soe': total_revised_estimate_soe,
         'total_excess_soe': total_excess_soe,
@@ -623,22 +666,137 @@ def final_report(request):
         'final_total_revised_estimate': final_total_revised_estimate,
         'final_total_excess': final_total_excess,
         'final_total_surrender': final_total_surrender,
-        'head_category_totals': head_category_totals,
-        'total_sanctioned_budget_head_category': total_sanctioned_budget_head_category,
-        'total_revised_estimate_head_category': total_revised_estimate_head_category,
-        'total_excess_head_category': total_excess_head_category,
-        'total_surrender_head_category': total_surrender_head_category,
-        'head_category_totals_7': head_category_totals_7,
-        'head_category_totals_11': head_category_totals_11,
-        'total_sanctioned_budget_head_category_7': total_sanctioned_budget_head_category_7,
-        'total_revised_estimate_head_category_7': total_revised_estimate_head_category_7,
-        'total_excess_head_category_7': total_excess_head_category_7,
-        'total_surrender_head_category_7': total_surrender_head_category_7,
-        'total_sanctioned_budget_head_category_11': total_sanctioned_budget_head_category_11,
-        'total_revised_estimate_head_category_11': total_revised_estimate_head_category_11,
-        'total_excess_head_category_11': total_excess_head_category_11,
-        'total_surrender_head_category_11': total_surrender_head_category_11,
     }
 
 
-    return render(request, 'final_report.html', context)
+    return render(request, 'head_summary.html', context)
+
+
+
+
+
+
+
+
+
+
+
+
+def type_summary(request):
+    # Fetch all data rows
+    data = DataRow.objects.all()
+
+    # Separate data by head_type
+    revenue_data = data.filter(head_type='Revenue')
+    capital_data = data.filter(head_type='Capital')
+    loan_data = data.filter(head_type='Loan')
+
+    # For each type (Revenue, Capital, Loan), separate by head group (C, S, A)
+    def get_head_group_totals(data):
+        return (
+            data
+            .annotate(head_group=Substr('head_name', Length('head_name') - 3, 4))  # Extract last 4 characters of head_name
+            .values('head_group')
+            .annotate(
+                total_sanctioned_budget=Sum('sanctioned_budget'),
+                total_revised_estimate=Sum('revised_estimate'),
+                total_excess=Sum('excess'),
+                total_surrender=Sum('surrender')
+            )
+            .order_by('head_group')
+        )
+    
+    # Get totals for Revenue, Capital, Loan types
+    revenue_groups = get_head_group_totals(revenue_data)
+    capital_groups = get_head_group_totals(capital_data)
+    loan_groups = get_head_group_totals(loan_data)
+
+    # Group by C, S, A for each type
+    def separate_groups_by_type(groups):
+        group_c = [item for item in groups if item['head_group'].startswith('C')]
+        group_s = [item for item in groups if item['head_group'].startswith('S')]
+        group_a = [item for item in groups if item['head_group'].startswith('A')]
+        return group_c, group_s, group_a
+
+    revenue_group_c, revenue_group_s, revenue_group_a = separate_groups_by_type(revenue_groups)
+    capital_group_c, capital_group_s, capital_group_a = separate_groups_by_type(capital_groups)
+    loan_group_c, loan_group_s, loan_group_a = separate_groups_by_type(loan_groups)
+
+    # Summing totals for each group (Revenue, Capital, Loan)
+    def sum_totals(group):
+        return {
+            'sanctioned_budget': sum(item['total_sanctioned_budget'] for item in group),
+            'revised_estimate': sum(item['total_revised_estimate'] for item in group),
+            'excess': sum(item['total_excess'] for item in group),
+            'surrender': sum(item['total_surrender'] for item in group),
+        }
+
+    revenue_totals_c = sum_totals(revenue_group_c)
+    revenue_totals_s = sum_totals(revenue_group_s)
+    revenue_totals_a = sum_totals(revenue_group_a)
+
+    capital_totals_c = sum_totals(capital_group_c)
+    capital_totals_s = sum_totals(capital_group_s)
+    capital_totals_a = sum_totals(capital_group_a)
+
+    loan_totals_c = sum_totals(loan_group_c)
+    loan_totals_s = sum_totals(loan_group_s)
+    loan_totals_a = sum_totals(loan_group_a)
+
+    # Grand totals for each category group (C, S, A)
+    final_group_c = {
+        'sanctioned_budget': revenue_totals_c['sanctioned_budget'] + capital_totals_c['sanctioned_budget'] + loan_totals_c['sanctioned_budget'],
+        'revised_estimate': revenue_totals_c['revised_estimate'] + capital_totals_c['revised_estimate'] + loan_totals_c['revised_estimate'],
+        'excess': revenue_totals_c['excess'] + capital_totals_c['excess'] + loan_totals_c['excess'],
+        'surrender': revenue_totals_c['surrender'] + capital_totals_c['surrender'] + loan_totals_c['surrender']
+    }
+
+    final_group_s = {
+        'sanctioned_budget': revenue_totals_s['sanctioned_budget'] + capital_totals_s['sanctioned_budget'] + loan_totals_s['sanctioned_budget'],
+        'revised_estimate': revenue_totals_s['revised_estimate'] + capital_totals_s['revised_estimate'] + loan_totals_s['revised_estimate'],
+        'excess': revenue_totals_s['excess'] + capital_totals_s['excess'] + loan_totals_s['excess'],
+        'surrender': revenue_totals_s['surrender'] + capital_totals_s['surrender'] + loan_totals_s['surrender']
+    }
+
+    final_group_a = {
+        'sanctioned_budget': revenue_totals_a['sanctioned_budget'] + capital_totals_a['sanctioned_budget'] + loan_totals_a['sanctioned_budget'],
+        'revised_estimate': revenue_totals_a['revised_estimate'] + capital_totals_a['revised_estimate'] + loan_totals_a['revised_estimate'],
+        'excess': revenue_totals_a['excess'] + capital_totals_a['excess'] + loan_totals_a['excess'],
+        'surrender': revenue_totals_a['surrender'] + capital_totals_a['surrender'] + loan_totals_a['surrender']
+    }
+
+    # Grand totals for all types combined
+    final_total_sanctioned_budget = revenue_totals_c['sanctioned_budget'] + capital_totals_c['sanctioned_budget'] + loan_totals_c['sanctioned_budget']
+    final_total_revised_estimate = revenue_totals_c['revised_estimate'] + capital_totals_c['revised_estimate'] + loan_totals_c['revised_estimate']
+    final_total_excess = revenue_totals_c['excess'] + capital_totals_c['excess'] + loan_totals_c['excess']
+    final_total_surrender = revenue_totals_c['surrender'] + capital_totals_c['surrender'] + loan_totals_c['surrender']
+
+    context = {
+        'revenue_group_c': revenue_group_c,
+        'revenue_group_s': revenue_group_s,
+        'revenue_group_a': revenue_group_a,
+        'capital_group_c': capital_group_c,
+        'capital_group_s': capital_group_s,
+        'capital_group_a': capital_group_a,
+        'loan_group_c': loan_group_c,
+        'loan_group_s': loan_group_s,
+        'loan_group_a': loan_group_a,
+        'revenue_totals_c': revenue_totals_c,
+        'revenue_totals_s': revenue_totals_s,
+        'revenue_totals_a': revenue_totals_a,
+        'capital_totals_c': capital_totals_c,
+        'capital_totals_s': capital_totals_s,
+        'capital_totals_a': capital_totals_a,
+        'loan_totals_c': loan_totals_c,
+        'loan_totals_s': loan_totals_s,
+        'loan_totals_a': loan_totals_a,
+        'final_group_c': final_group_c,
+        'final_group_s': final_group_s,
+        'final_group_a': final_group_a,
+        'final_total_sanctioned_budget': final_total_sanctioned_budget,
+        'final_total_revised_estimate': final_total_revised_estimate,
+        'final_total_excess': final_total_excess,
+        'final_total_surrender': final_total_surrender,
+    }
+
+    return render(request, 'type_summary.html', context)
