@@ -17,9 +17,21 @@
 <body>
     <div class="container mt-4">
         <h1 class="text-center mb-4">FINAL REPORTS</h1>
-        <a href="/" class="btn btn-warning mb-4">Home</a>
-        <a href="/head_summary/" class="btn btn-warning mb-4">Head Summary</a>
-        <a href="/type_summary/" class="btn btn-warning mb-4">TYPE SUMMARY</a>
+
+    <!-- Import Button -->
+    <a href="/import_csv/" class="btn btn-secondary mb-4">Import CSV</a>
+    <!-- Add Data Button -->
+    <a href="/add/" class="btn btn-primary mb-4">Add New Data</a>
+    <!-- Changes Report -->
+    <a href="/changes_report/" class="btn btn-success mb-4">Changes Report</a>
+    <!-- Supplementary Report -->
+    <a href="/supplementary_report/" class="btn btn-success mb-4">Supplementary Report</a>
+    <!-- Head Report -->
+    <a href="/group_summary/" class="btn btn-warning mb-4">Group Summary</a>
+    <!-- Type Report -->
+    <a href="/type_summary/" class="btn btn-warning mb-4">Type Summary</a>
+
+    <a href="/admin/" class="btn btn-warning mb-4">Admin Page</a>
         <!-- Export to Excel Button -->
         <button class="btn btn-primary mb-4" onclick="exportToExcel()">Export Final Report</button>
 
@@ -38,8 +50,8 @@
                                     <th>SOE Name</th>
                                     <th>Sanctioned Budget (SB)</th>
                                     <th>Total Expenditure (RE)</th>
-                                    <th>Excess</th>
-                                    <th>Surrender</th>
+                                    <th>(+) Excess</th>
+                                    <th>(-) Surrender</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -74,8 +86,8 @@
                                     <th>Department Name</th>
                                     <th>Sanctioned Budget (SB)</th>
                                     <th>Total Expenditure (RE)</th>
-                                    <th>Excess</th>
-                                    <th>Surrender</th>
+                                    <th>(+) Excess</th>
+                                    <th>(-) Surrender</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -111,8 +123,8 @@
                                 <th>Head Category</th>
                                 <th>Sanctioned Budget</th>
                                 <th>Total Expenditure (RE)</th>
-                                <th>Excess</th>
-                                <th>Surrender</th>
+                                <th>(+) Excess</th>
+                                <th>(-) Surrender</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -145,8 +157,8 @@
                                 <th>Head Category</th>
                                 <th>Sanctioned Budget</th>
                                 <th>Total Expenditure (RE)</th>
-                                <th>Excess</th>
-                                <th>Surrender</th>
+                                <th>(+) Excess</th>
+                                <th>(-) Surrender</th>
                             </tr>
                         </thead>
                         <tbody>

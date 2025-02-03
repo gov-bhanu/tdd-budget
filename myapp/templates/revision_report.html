@@ -18,9 +18,22 @@
     <div class="container mt-4">
         <h1 class="text-center mb-4">Revision Report</h1>
         
-        <a href="/" class="btn btn-warning mb-4">Home</a>
+    <!-- Import Button -->
+    <a href="/import_csv/" class="btn btn-secondary mb-4">Import CSV</a>
+    <!-- Add Data Button -->
+    <a href="/add/" class="btn btn-primary mb-4">Add New Data</a>
+    <!-- Changes Report -->
+    <a href="/changes_report/" class="btn btn-success mb-4">Changes Report</a>
+    <!-- Supplementary Report -->
+    <a href="/supplementary_report/" class="btn btn-success mb-4">Supplementary Report</a>
+    <!-- Final Report -->
+    <a href="/final_report/" class="btn btn-success mb-4">Final Report</a>
+    <!-- Head Report -->
+    <a href="/group_summary/" class="btn btn-warning mb-4">Group Summary</a>
+    <!-- Type Report -->
+    <a href="/type_summary/" class="btn btn-warning mb-4">Type Summary</a>
 
-        <a href="/supplementary_report" class="btn btn-success mb-4">See Supplementary Report</a>
+    <a href="/admin/" class="btn btn-warning mb-4">Admin Page</a>
         <!-- Export to Excel Button -->
         <button class="btn btn-primary mb-4" onclick="exportToExcel('revisionReportTable', 'Revision_Report')">Export Revision Report</button>
         <!-- Final Report -->
@@ -48,8 +61,8 @@
                         <th>SOE Name</th>
                         <th>Sanctioned Budget (SB)</th>
                         <th>Total Expenditure (RE)</th>
-                        <th>Excess</th>
-                        <th>Surrender</th>
+                        <th>(+) Excess</th>
+                        <th>(-) Surrender</th>
                         <th>Last Change Date</th>
                     </tr>
                 </thead>

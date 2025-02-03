@@ -9,499 +9,389 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@100..900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
 </head>
 <body>
-
-
     <div class="container mt-4">
         <h1 class="text-center mb-4">TYPE SUMMARIES</h1>
-        <a href="/" class="btn btn-warning mb-4">Home</a>
-        <a href="/type_summary/" class="btn btn-warning mb-4">TYPE SUMMARY</a>
-        <!-- Export to Excel Button -->
-        <button class="btn btn-primary mb-4" onclick="exportToExcel()">Export TYPE SUMMARIES</button>
+    <!-- Import Button -->
+    <a href="/import_csv/" class="btn btn-secondary mb-4">Import CSV</a>
+    <!-- Add Data Button -->
+    <a href="/add/" class="btn btn-primary mb-4">Add New Data</a>
+    <!-- Changes Report -->
+    <a href="/changes_report/" class="btn btn-success mb-4">Changes Report</a>
+    <!-- Supplementary Report -->
+    <a href="/supplementary_report/" class="btn btn-success mb-4">Supplementary Report</a>
+    <!-- Final Report -->
+    <a href="/final_report/" class="btn btn-success mb-4">Final Report</a>
+    <!-- Head Report -->
+    <a href="/group_summary/" class="btn btn-warning mb-4">Group Summary</a>
 
+    <a href="/admin/" class="btn btn-warning mb-4">Admin Page</a>
+
+        <button class="btn btn-primary mb-4" onclick="exportToExcel()">Export Type Summary</button>
+        
         <div id="finalTypeTable">
-            <!-- Group C Section -->
-            <h2>Category Group C</h2>
-            <!-- Revenue Section -->
-            <h3>Type: Revenue</h3>
             <div class="table-responsive">
-                <table id="CategoryC_Revenue" class="table table-bordered table-striped">
+                <table class="table table-bordered table-striped">
                     <thead class="thead-dark">
                         <tr>
-                            <th>Head Group</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for group in revenue_group_c %}
-                        <tr>
-                            <td>{{ group.head_group }}</td>
-                            <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
-                            <td>{{ group.total_excess|floatformat:2 }}</td>
-                            <td>{{ group.total_surrender|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="font-weight-bold">
-                            <td><strong>Total</strong></td>
-                            <td>{{ revenue_totals_c.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_c.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_c.excess|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_c.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                    
-                </table>
-            </div>
-
-            <!-- Capital Section -->
-            <h3>Type: Capital</h3>
-            <div class="table-responsive">
-                <table id="CategoryC_Capital" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Head Group</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for group in capital_group_c %}
-                        <tr>
-                            <td>{{ group.head_group }}</td>
-                            <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
-                            <td>{{ group.total_excess|floatformat:2 }}</td>
-                            <td>{{ group.total_surrender|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="font-weight-bold">
-                            <td><strong>Total</strong></td>
-                            <td>{{ capital_totals_c.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ capital_totals_c.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ capital_totals_c.excess|floatformat:2 }}</td>
-                            <td>{{ capital_totals_c.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Loan Section -->
-            <h3>Type: Loan</h3>
-            <div class="table-responsive">
-                <table id="CategoryC_Loan" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Head Group</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for group in loan_group_c %}
-                        <tr>
-                            <td>{{ group.head_group }}</td>
-                            <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
-                            <td>{{ group.total_excess|floatformat:2 }}</td>
-                            <td>{{ group.total_surrender|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="font-weight-bold">
-                            <td><strong>Total</strong></td>
-                            <td>{{ loan_totals_c.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ loan_totals_c.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ loan_totals_c.excess|floatformat:2 }}</td>
-                            <td>{{ loan_totals_c.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-
-            <!-- Group C Total Section -->
-            <h4>Total Group C</h4>
-            <div class="table-responsive">
-                <table id="CategoryC_Totals" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
+                            <th>Category</th>
                             <th>Type</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="font-weight-bold">
-                            <td>Revenue</td>
-                            <td>{{ revenue_totals_c.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_c.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_c.excess|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_c.surrender|floatformat:2 }}</td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td>Capital</td>
-                            <td>{{ capital_totals_c.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ capital_totals_c.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ capital_totals_c.excess|floatformat:2 }}</td>
-                            <td>{{ capital_totals_c.surrender|floatformat:2 }}</td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td>Loan</td>
-                            <td>{{ loan_totals_c.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ loan_totals_c.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ loan_totals_c.excess|floatformat:2 }}</td>
-                            <td>{{ loan_totals_c.surrender|floatformat:2 }}</td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td><strong>Total Group C</strong></td>
-                            <td>{{ final_group_c.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ final_group_c.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ final_group_c.excess|floatformat:2 }}</td>
-                            <td>{{ final_group_c.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-                
-
-            <!-- Group S Section -->
-            <h2>Category Group S</h2>
-            <!-- Revenue Section -->
-            <h3>Type: Revenue</h3>
-            <div class="table-responsive">
-                <table id="CategoryS_Revenue" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
                             <th>Head Group</th>
                             <th>Sanctioned Budget</th>
                             <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
+                            <th>(+) Excess</th>
+                            <th>(-) Surrender</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for group in revenue_group_s %}
-                        <tr>
-                            <td>{{ group.head_group }}</td>
-                            <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
-                            <td>{{ group.total_excess|floatformat:2 }}</td>
-                            <td>{{ group.total_surrender|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="font-weight-bold">
-                            <td><strong>Total</strong></td>
-                            <td>{{ revenue_totals_s.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_s.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_s.excess|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_s.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
+
+                        <tbody>
+
+                            <!-- Group C - Revenue -->
+                            {% for group in revenue_group_c %}
+                            <tr>
+                                <td>Group C</td>
+                                <td>Revenue</td>
+                                <td>{{ group.head_group }}</td>
+                                <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
+                                <td>{{ group.total_excess|floatformat:2 }}</td>
+                                <td>{{ group.total_surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>Group C</td>
+                                <td>Revenue</td>
+                                <td>—</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row for Revenue in Group C -->
+                            <tr class="table-success">
+                                <td colspan="3"><strong>Group C Revenue Total</strong></td>
+                                <td><strong>{{ revenue_totals_c.sanctioned_budget|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ revenue_totals_c.revised_estimate|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ revenue_totals_c.excess|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ revenue_totals_c.surrender|default:"0.00"|floatformat:2 }}</strong></td>
+                            </tr>
+
+                            <!-- Group C - Capital -->
+                            {% for group in capital_group_c %}
+                            <tr>
+                                <td>Group C</td>
+                                <td>Capital</td>
+                                <td>{{ group.head_group }}</td>
+                                <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
+                                <td>{{ group.total_excess|floatformat:2 }}</td>
+                                <td>{{ group.total_surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>Group C</td>
+                                <td>Capital</td>
+                                <td>—</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row for Capital in Group C -->
+                            <tr class="table-success">
+                                <td colspan="3"><strong>Group C Capital Total</strong></td>
+                                <td><strong>{{ capital_totals_c.sanctioned_budget|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ capital_totals_c.revised_estimate|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ capital_totals_c.excess|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ capital_totals_c.surrender|default:"0.00"|floatformat:2 }}</strong></td>
+                            </tr>
+
+                            <!-- Group C - Loan -->
+                            {% for group in loan_group_c %}
+                            <tr>
+                                <td>Group C</td>
+                                <td>Loan</td>
+                                <td>{{ group.head_group }}</td>
+                                <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
+                                <td>{{ group.total_excess|floatformat:2 }}</td>
+                                <td>{{ group.total_surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>Group C</td>
+                                <td>Loan</td>
+                                <td>—</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row for Loan in Group C -->
+                            <tr class="table-success">
+                                <td colspan="3"><strong>Group C Loan Total</strong></td>
+                                <td><strong>{{ loan_totals_c.sanctioned_budget|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ loan_totals_c.revised_estimate|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ loan_totals_c.excess|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ loan_totals_c.surrender|default:"0.00"|floatformat:2 }}</strong></td>
+                            </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+                                                        <!-- Group S - Revenue -->
+                            {% for group in revenue_group_s %}
+                            <tr>
+                                <td>Group S</td>
+                                <td>Revenue</td>
+                                <td>{{ group.head_group }}</td>
+                                <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
+                                <td>{{ group.total_excess|floatformat:2 }}</td>
+                                <td>{{ group.total_surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>Group S</td>
+                                <td>Revenue</td>
+                                <td>—</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row for Revenue in Group S -->
+                            <tr class="table-success">
+                                <td colspan="3"><strong>Group S Revenue Total</strong></td>
+                                <td><strong>{{ revenue_totals_s.sanctioned_budget|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ revenue_totals_s.revised_estimate|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ revenue_totals_s.excess|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ revenue_totals_s.surrender|default:"0.00"|floatformat:2 }}</strong></td>
+                            </tr>
+
+                            <!-- Group S - Capital -->
+                            {% for group in capital_group_s %}
+                            <tr>
+                                <td>Group S</td>
+                                <td>Capital</td>
+                                <td>{{ group.head_group }}</td>
+                                <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
+                                <td>{{ group.total_excess|floatformat:2 }}</td>
+                                <td>{{ group.total_surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>Group S</td>
+                                <td>Capital</td>
+                                <td>—</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row for Capital in Group S -->
+                            <tr class="table-success">
+                                <td colspan="3"><strong>Group S Capital Total</strong></td>
+                                <td><strong>{{ capital_totals_s.sanctioned_budget|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ capital_totals_s.revised_estimate|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ capital_totals_s.excess|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ capital_totals_s.surrender|default:"0.00"|floatformat:2 }}</strong></td>
+                            </tr>
+
+                            <!-- Group S - Loan -->
+                            {% for group in loan_group_s %}
+                            <tr>
+                                <td>Group S</td>
+                                <td>Loan</td>
+                                <td>{{ group.head_group }}</td>
+                                <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
+                                <td>{{ group.total_excess|floatformat:2 }}</td>
+                                <td>{{ group.total_surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>Group S</td>
+                                <td>Loan</td>
+                                <td>—</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row for Loan in Group S -->
+                            <tr class="table-success">
+                                <td colspan="3"><strong>Group S Loan Total</strong></td>
+                                <td><strong>{{ loan_totals_s.sanctioned_budget|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ loan_totals_s.revised_estimate|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ loan_totals_s.excess|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ loan_totals_s.surrender|default:"0.00"|floatformat:2 }}</strong></td>
+                            </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+                            <!-- Group A - Revenue -->
+                            {% for group in revenue_group_a %}
+                            <tr>
+                                <td>Group A</td>
+                                <td>Revenue</td>
+                                <td>{{ group.head_group }}</td>
+                                <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
+                                <td>{{ group.total_excess|floatformat:2 }}</td>
+                                <td>{{ group.total_surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>Group A</td>
+                                <td>Revenue</td>
+                                <td>—</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row for Revenue in Group A -->
+                            <tr class="table-success">
+                                <td colspan="3"><strong>Group A Revenue Total</strong></td>
+                                <td><strong>{{ revenue_totals_a.sanctioned_budget|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ revenue_totals_a.revised_estimate|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ revenue_totals_a.excess|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ revenue_totals_a.surrender|default:"0.00"|floatformat:2 }}</strong></td>
+                            </tr>
+
+                            <!-- Group A - Capital -->
+                            {% for group in capital_group_a %}
+                            <tr>
+                                <td>Group A</td>
+                                <td>Capital</td>
+                                <td>{{ group.head_group }}</td>
+                                <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
+                                <td>{{ group.total_excess|floatformat:2 }}</td>
+                                <td>{{ group.total_surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>Group A</td>
+                                <td>Capital</td>
+                                <td>—</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row for Capital in Group A -->
+                            <tr class="table-success">
+                                <td colspan="3"><strong>Group A Capital Total</strong></td>
+                                <td><strong>{{ capital_totals_a.sanctioned_budget|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ capital_totals_a.revised_estimate|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ capital_totals_a.excess|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ capital_totals_a.surrender|default:"0.00"|floatformat:2 }}</strong></td>
+                            </tr>
+
+                            <!-- Group A - Loan -->
+                            {% for group in loan_group_a %}
+                            <tr>
+                                <td>Group A</td>
+                                <td>Loan</td>
+                                <td>{{ group.head_group }}</td>
+                                <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
+                                <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
+                                <td>{{ group.total_excess|floatformat:2 }}</td>
+                                <td>{{ group.total_surrender|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>Group A</td>
+                                <td>Loan</td>
+                                <td>—</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                            </tr>
+                            {% endfor %}
+                            <!-- Total Row for Loan in Group A -->
+                            <tr class="table-success">
+                                <td colspan="3"><strong>Group A Loan Total</strong></td>
+                                <td><strong>{{ loan_totals_a.sanctioned_budget|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ loan_totals_a.revised_estimate|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ loan_totals_a.excess|default:"0.00"|floatformat:2 }}</strong></td>
+                                <td><strong>{{ loan_totals_a.surrender|default:"0.00"|floatformat:2 }}</strong></td>
+                            </tr>
+
+
+                            <tr class="table-danger">
+                                <td colspan="3"><strong>Grand Total for Group C</strong></td>
+                                <td><strong>{{ final_group_c.sanctioned_budget|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_group_c.revised_estimate|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_group_c.excess|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_group_c.surrender|floatformat:2 }}</strong></td>
+                            </tr>
+                            <tr class="table-danger">
+                                <td colspan="3"><strong>Grand Total for Group S</strong></td>
+                                <td><strong>{{ final_group_s.sanctioned_budget|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_group_s.revised_estimate|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_group_s.excess|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_group_s.surrender|floatformat:2 }}</strong></td>
+                            </tr>
+                            <tr class="table-danger">
+                                <td colspan="3"><strong>Grand Total for Group A</strong></td>
+                                <td><strong>{{ final_group_a.sanctioned_budget|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_group_a.revised_estimate|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_group_a.excess|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_group_a.surrender|floatformat:2 }}</strong></td>
+                            </tr>
+                            
+                            <tr class="table-primary">
+                                <td colspan="3"><strong>All Groups Final Total (C+S+A)</strong></td>
+                                <td><strong>{{ final_total.sanctioned_budget|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_total.revised_estimate|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_total.excess|floatformat:2 }}</strong></td>
+                                <td><strong>{{ final_total.surrender|floatformat:2 }}</strong></td>
+                            </tr>
+                            
+                        </tbody>
+
                 </table>
             </div>
-
-            <!-- Capital Section -->
-            <h3>Type: Capital</h3>
-            <div class="table-responsive">
-                <table id="CategoryS_Capital" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Head Group</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for group in capital_group_s %}
-                        <tr>
-                            <td>{{ group.head_group }}</td>
-                            <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
-                            <td>{{ group.total_excess|floatformat:2 }}</td>
-                            <td>{{ group.total_surrender|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="font-weight-bold">
-                            <td><strong>Total</strong></td>
-                            <td>{{ capital_totals_s.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ capital_totals_s.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ capital_totals_s.excess|floatformat:2 }}</td>
-                            <td>{{ capital_totals_s.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Loan Section -->
-            <h3>Type: Loan</h3>
-            <div class="table-responsive">
-                <table id="CategoryS_Loan" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Head Group</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for group in loan_group_s %}
-                        <tr>
-                            <td>{{ group.head_group }}</td>
-                            <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
-                            <td>{{ group.total_excess|floatformat:2 }}</td>
-                            <td>{{ group.total_surrender|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="font-weight-bold">
-                            <td><strong>Total</strong></td>
-                            <td>{{ loan_totals_s.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ loan_totals_s.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ loan_totals_s.excess|floatformat:2 }}</td>
-                            <td>{{ loan_totals_s.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-
-            <!-- Group S Total Section -->
-            <h4>Total Group S</h4>
-            <div class="table-responsive">
-                <table id="CategoryS_Totals" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Type</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="font-weight-bold">
-                            <td>Revenue</td>
-                            <td>{{ revenue_totals_s.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_s.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_s.excess|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_s.surrender|floatformat:2 }}</td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td>Capital</td>
-                            <td>{{ capital_totals_s.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ capital_totals_s.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ capital_totals_s.excess|floatformat:2 }}</td>
-                            <td>{{ capital_totals_s.surrender|floatformat:2 }}</td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td>Loan</td>
-                            <td>{{ loan_totals_s.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ loan_totals_s.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ loan_totals_s.excess|floatformat:2 }}</td>
-                            <td>{{ loan_totals_s.surrender|floatformat:2 }}</td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td><strong>Total Group S</strong></td>
-                            <td>{{ final_group_s.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ final_group_s.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ final_group_s.excess|floatformat:2 }}</td>
-                            <td>{{ final_group_s.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Group A Section -->
-            <h2>Category Group A</h2>
-            <!-- Revenue Section -->
-            <h3>Type: Revenue</h3>
-            <div class="table-responsive">
-                <table id="CategoryA_Revenue" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Head Group</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for group in revenue_group_a %}
-                        <tr>
-                            <td>{{ group.head_group }}</td>
-                            <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
-                            <td>{{ group.total_excess|floatformat:2 }}</td>
-                            <td>{{ group.total_surrender|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="font-weight-bold">
-                            <td><strong>Total</strong></td>
-                            <td>{{ revenue_totals_a.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_a.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_a.excess|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_a.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Capital Section -->
-            <h3>Type: Capital</h3>
-            <div class="table-responsive">
-                <table id="CategoryA_Capital" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Head Group</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for group in capital_group_a %}
-                        <tr>
-                            <td>{{ group.head_group }}</td>
-                            <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
-                            <td>{{ group.total_excess|floatformat:2 }}</td>
-                            <td>{{ group.total_surrender|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="font-weight-bold">
-                            <td><strong>Total</strong></td>
-                            <td>{{ capital_totals_a.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ capital_totals_a.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ capital_totals_a.excess|floatformat:2 }}</td>
-                            <td>{{ capital_totals_a.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Loan Section -->
-            <h3>Type: Loan</h3>
-            <div class="table-responsive">
-                <table id="CategoryA_Loan" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Head Group</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for group in loan_group_a %}
-                        <tr>
-                            <td>{{ group.head_group }}</td>
-                            <td>{{ group.total_sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ group.total_revised_estimate|floatformat:2 }}</td>
-                            <td>{{ group.total_excess|floatformat:2 }}</td>
-                            <td>{{ group.total_surrender|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="font-weight-bold">
-                            <td><strong>Total</strong></td>
-                            <td>{{ loan_totals_a.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ loan_totals_a.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ loan_totals_a.excess|floatformat:2 }}</td>
-                            <td>{{ loan_totals_a.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Group A Total Section -->
-            <h4>Total Group A</h4>
-            <div class="table-responsive">
-                <table id="CategoryA_Totals" class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Type</th>
-                            <th>Sanctioned Budget</th>
-                            <th>Total Expenditure (RE)</th>
-                            <th>Excess</th>
-                            <th>Surrender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="font-weight-bold">
-                            <td>Revenue</td>
-                            <td>{{ revenue_totals_a.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_a.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_a.excess|floatformat:2 }}</td>
-                            <td>{{ revenue_totals_a.surrender|floatformat:2 }}</td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td>Capital</td>
-                            <td>{{ capital_totals_a.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ capital_totals_a.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ capital_totals_a.excess|floatformat:2 }}</td>
-                            <td>{{ capital_totals_a.surrender|floatformat:2 }}</td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td>Loan</td>
-                            <td>{{ loan_totals_a.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ loan_totals_a.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ loan_totals_a.excess|floatformat:2 }}</td>
-                            <td>{{ loan_totals_a.surrender|floatformat:2 }}</td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td><strong>Total Group A</strong></td>
-                            <td>{{ final_group_a.sanctioned_budget|floatformat:2 }}</td>
-                            <td>{{ final_group_a.revised_estimate|floatformat:2 }}</td>
-                            <td>{{ final_group_a.excess|floatformat:2 }}</td>
-                            <td>{{ final_group_a.surrender|floatformat:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-
-
-
-
-        </div> <!--  all tables container -->
-
-
-
-
-
-
-    </div>  <!--  first div -->
-
-
-
-
-
-
-
-
-
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/type_summary.js' %}"></script>
 </body>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="{% static 'js/type_summary.js' %}"></script>
 </html>

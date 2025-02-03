@@ -571,7 +571,7 @@ def final_report(request):
 
 
 
-def head_summary(request):
+def group_summary(request):
     # Existing data fetch logic
     data = DataRow.objects.all().values(
         'department_name', 
@@ -669,7 +669,7 @@ def head_summary(request):
     }
 
 
-    return render(request, 'head_summary.html', context)
+    return render(request, 'group_summary.html', context)
 
 
 
@@ -771,6 +771,15 @@ def type_summary(request):
     final_total_excess = revenue_totals_c['excess'] + capital_totals_c['excess'] + loan_totals_c['excess']
     final_total_surrender = revenue_totals_c['surrender'] + capital_totals_c['surrender'] + loan_totals_c['surrender']
 
+
+    final_total = {
+    "sanctioned_budget": final_group_c["sanctioned_budget"] + final_group_s["sanctioned_budget"] + final_group_a["sanctioned_budget"],
+    "revised_estimate": final_group_c["revised_estimate"] + final_group_s["revised_estimate"] + final_group_a["revised_estimate"],
+    "excess": final_group_c["excess"] + final_group_s["excess"] + final_group_a["excess"],
+    "surrender": final_group_c["surrender"] + final_group_s["surrender"] + final_group_a["surrender"],
+}
+
+
     context = {
         'revenue_group_c': revenue_group_c,
         'revenue_group_s': revenue_group_s,
@@ -797,6 +806,7 @@ def type_summary(request):
         'final_total_revised_estimate': final_total_revised_estimate,
         'final_total_excess': final_total_excess,
         'final_total_surrender': final_total_surrender,
+        'final_total': final_total,
     }
 
     return render(request, 'type_summary.html', context)

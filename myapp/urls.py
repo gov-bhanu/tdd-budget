@@ -6,7 +6,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),  # Root URL
     path('final_report/', views.final_report, name='final_report'),
-    path('head_summary/', views.head_summary, name='head_summary'),
+    path('group_summary/', views.group_summary, name='group_summary'),
     path('type_summary/', views.type_summary, name='type_summary'),
     path('fetch-data/', views.fetch_data, name='fetch_data'),
     path('update-revised-estimate/', views.update_revised_estimate, name='update_revised_estimate'),
