@@ -2,18 +2,20 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from collections import defaultdict
-from .models import DataRow
-from django.db.models import Sum
-import json
-import csv
-from django.core.serializers import serialize
-from django.db.models import F, Count
+from django.db import transaction
+from django.db.models import Sum, F, Count
+from django.db.models.functions import Substr, Length
 from django.utils.dateparse import parse_date
 from django.utils.timezone import now, timedelta
-from django.db.models import Sum, F
-from django.db.models.functions import Substr, Length
-from django.shortcuts import render
+from django.core.serializers import serialize
+import json
+import csv
+from collections import defaultdict
+from .models import DataRow
+
+
+
+
 
 
 def index(request):
@@ -88,9 +90,6 @@ def update_revised_estimate(request):
 
 
 
-
-
-
 def import_csv(request):
     if request.method == "POST":
         csv_file = request.FILES.get("csv_file")
@@ -102,53 +101,77 @@ def import_csv(request):
         try:
             decoded_file = csv_file.read().decode("utf-8").splitlines()
             reader = csv.DictReader(decoded_file)
-
-            # Debug: Print CSV column names to verify
             print("CSV Columns:", reader.fieldnames)
 
-            for row in reader:
-                try:
-                    unique_search = f"{row['Department Name'].strip()}-{row['Scheme Name'].strip()}-{row['Head Name'].strip()}-{row['SOE Name'].strip()}"
+            with transaction.atomic():
+                for row in reader:
+                    try:
+                        soe_name = row["SOE Name"].strip()
+                        head_name = row["Head Name"].strip()
+                        # Other fields from CSV (for new records) are:
+                        department_name = row["Department Name"].strip()
+                        scheme_name = row["Scheme Name"].strip()
 
-                    # Retrieve existing row if it exists
-                    existing_row = DataRow.objects.filter(unique_search=unique_search).first()
+                        # Convert numeric values, using None if empty.
+                        def safe_float(value):
+                            return float(value) if value and value.strip() != "" else None
 
-                    # Preserve the existing sanctioned_budget value if the row exists
-                    sanctioned_budget = existing_row.sanctioned_budget if existing_row else (float(row["SB"]) if row["SB"] else None)
+                        # Values to update
+                        in_divisible = safe_float(row.get("In Divisible"))
+                        divisible = safe_float(row.get("Divisible"))
+                        kinnaur = safe_float(row.get("Kinnaur"))
+                        lahaul = safe_float(row.get("Lahaul"))
+                        spiti = safe_float(row.get("Spiti"))
+                        pangi = safe_float(row.get("Pangi"))
+                        bharmaur = safe_float(row.get("Bharmaur"))
 
-                    DataRow.objects.update_or_create(
-                        unique_search=unique_search,
-                        defaults={
-                            "department_name": row["Department Name"].strip(),
-                            "head_name": row["Head Name"].strip(),
-                            "scheme_name": row["Scheme Name"].strip(),
-                            "soe_name": row["SOE Name"].strip(),
-                            "sanctioned_budget": sanctioned_budget,  # Do not overwrite existing value
-                            "revised_estimate": float(row["RE"]) if row["RE"] else None,
-                            "in_divisible": float(row["In Divisible"]) if row["In Divisible"] else None,
-                            "divisible": float(row["Divisible"]) if row["Divisible"] else None,
-                            "kinnaur": float(row["Kinnaur"]) if row["Kinnaur"] else None,
-                            "lahaul": float(row["Lahaul"]) if row["Lahaul"] else None,
-                            "spiti": float(row["Spiti"]) if row["Spiti"] else None,
-                            "pangi": float(row["Pangi"]) if row["Pangi"] else None,
-                            "bharmaur": float(row["Bharmaur"]) if row["Bharmaur"] else None,
-                        },
-                    )
-                except KeyError as e:
-                    messages.error(request, f"Missing column: {e}. Check CSV headers.")
-                    return redirect("import_csv")
-                except ValueError as e:
-                    messages.error(request, f"Invalid data format: {e}.")
-                    return redirect("import_csv")
-                
+                        try:
+                            # Try to retrieve an existing record using the unique constraint fields.
+                            data_row = DataRow.objects.get(soe_name=soe_name, head_name=head_name)
+                            # Update only the specified fields.
+                            data_row.in_divisible = in_divisible
+                            data_row.divisible = divisible
+                            data_row.kinnaur = kinnaur
+                            data_row.lahaul = lahaul
+                            data_row.spiti = spiti
+                            data_row.pangi = pangi
+                            data_row.bharmaur = bharmaur
+                            # Note: department_name, scheme_name, sanctioned_budget, etc. remain unchanged.
+                            data_row.save()
+                        except DataRow.DoesNotExist:
+                            # If record doesn't exist, create a new one using all available values.
+                            sanctioned_budget = safe_float(row.get("SB"))
+                            DataRow.objects.create(
+                                department_name=department_name,
+                                head_name=head_name,
+                                scheme_name=scheme_name,
+                                soe_name=soe_name,
+                                sanctioned_budget=sanctioned_budget,
+                                in_divisible=in_divisible,
+                                divisible=divisible,
+                                kinnaur=kinnaur,
+                                lahaul=lahaul,
+                                spiti=spiti,
+                                pangi=pangi,
+                                bharmaur=bharmaur,
+                            )
+                    except KeyError as e:
+                        messages.error(request, f"Missing column: {e}. Check CSV headers.")
+                        return redirect("import_csv")
+                    except ValueError as e:
+                        messages.error(request, f"Invalid data format: {e}.")
+                        return redirect("import_csv")
+            
             messages.success(request, "CSV file imported successfully!")
             return redirect("/")
-
+        
         except Exception as e:
             messages.error(request, f"Error processing file: {str(e)}")
             return redirect("import_csv")
 
     return render(request, "import.html")
+
+
 
 
 
