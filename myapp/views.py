@@ -91,68 +91,66 @@ def update_revised_estimate(request):
 
 
 
-
 def import_csv(request):
     if request.method == "POST":
         csv_file = request.FILES.get("csv_file")
         
-        if not csv_file.name.endswith(".csv"):
+        if not csv_file or not csv_file.name.endswith(".csv"):
             messages.error(request, "File is not a valid CSV.")
             return redirect("import_csv")
 
         try:
             decoded_file = csv_file.read().decode("utf-8").splitlines()
             reader = csv.DictReader(decoded_file)
-            
-            for row in reader:
-                # department_code = row["department_code"]
-                department_name = row["department_name"]
-                head_name = row["head_name"]
-                scheme_name = row["scheme_name"]
-                soe_name = row["soe_name"]
-                sanctioned_budget = float(row["sanctioned_budget"])
-                revised_estimate = float(row["in_divisible"]) if row.get("in_divisible") else None
-                in_divisible = float(row["in_divisible"]) if row.get("in_divisible") else None                
-                divisible = float(row["in_divisible"]) if row.get("divisible") else None
-                kinnaur = float(row["kinnaur"]) if row.get("kinnaur") else None
-                lahaul = float(row["lahaul"]) if row.get("lahaul") else None
-                spiti = float(row["spiti"]) if row.get("spiti") else None
-                pangi = float(row["pangi"]) if row.get("pangi") else None
-                bharmaur = float(row["bharmaur"]) if row.get("bharmaur") else None
 
+            # Debug: Print CSV column names to verify
+            print("CSV Columns:", reader.fieldnames)
+
+            for row in reader:
                 try:
-                    # Create or update the DataRow
-                    data, created = DataRow.objects.update_or_create(
-                        # unique_search=f"{department_code}-{department_name}-{scheme_name}-{head_name}-{soe_name}",
-                        unique_search=f"{department_name}-{scheme_name}-{head_name}-{soe_name}",
+                    unique_search = f"{row['Department Name'].strip()}-{row['Scheme Name'].strip()}-{row['Head Name'].strip()}-{row['SOE Name'].strip()}"
+
+                    # Retrieve existing row if it exists
+                    existing_row = DataRow.objects.filter(unique_search=unique_search).first()
+
+                    # Preserve the existing sanctioned_budget value if the row exists
+                    sanctioned_budget = existing_row.sanctioned_budget if existing_row else (float(row["SB"]) if row["SB"] else None)
+
+                    DataRow.objects.update_or_create(
+                        unique_search=unique_search,
                         defaults={
-                            # "department_code": department_code,
-                            "department_name": department_name,
-                            "head_name": head_name,
-                            "scheme_name": scheme_name,
-                            "soe_name": soe_name,
-                            "sanctioned_budget": sanctioned_budget,
-                            "revised_estimate": revised_estimate,
-                            "in_divisible": in_divisible,
-                            "divisible": divisible,
-                            "kinnaur": kinnaur,
-                            "lahaul": lahaul,
-                            "spiti": spiti,
-                            "pangi": pangi,
-                            "bharmaur": bharmaur,
+                            "department_name": row["Department Name"].strip(),
+                            "head_name": row["Head Name"].strip(),
+                            "scheme_name": row["Scheme Name"].strip(),
+                            "soe_name": row["SOE Name"].strip(),
+                            "sanctioned_budget": sanctioned_budget,  # Do not overwrite existing value
+                            "revised_estimate": float(row["RE"]) if row["RE"] else None,
+                            "in_divisible": float(row["In Divisible"]) if row["In Divisible"] else None,
+                            "divisible": float(row["Divisible"]) if row["Divisible"] else None,
+                            "kinnaur": float(row["Kinnaur"]) if row["Kinnaur"] else None,
+                            "lahaul": float(row["Lahaul"]) if row["Lahaul"] else None,
+                            "spiti": float(row["Spiti"]) if row["Spiti"] else None,
+                            "pangi": float(row["Pangi"]) if row["Pangi"] else None,
+                            "bharmaur": float(row["Bharmaur"]) if row["Bharmaur"] else None,
                         },
                     )
-                except Exception as e:
-                    messages.error(request, f"Row error: {row}. Error: {str(e)}")
-            
+                except KeyError as e:
+                    messages.error(request, f"Missing column: {e}. Check CSV headers.")
+                    return redirect("import_csv")
+                except ValueError as e:
+                    messages.error(request, f"Invalid data format: {e}.")
+                    return redirect("import_csv")
+                
             messages.success(request, "CSV file imported successfully!")
             return redirect("/")
-        
+
         except Exception as e:
             messages.error(request, f"Error processing file: {str(e)}")
             return redirect("import_csv")
 
     return render(request, "import.html")
+
+
 
 
 
