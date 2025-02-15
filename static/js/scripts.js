@@ -1,4 +1,3 @@
-
 let allData = []; // To store all fetched data
 
 // Fetch all data and populate the main table and dropdown
@@ -45,8 +44,6 @@ function populateMainTable() {
     });
 }
 
-
-
 // Populate the Head Name dropdown
 function populateHeadNameDropdown() {
     const headNameDropdown = document.getElementById('headNameDropdown');
@@ -80,7 +77,6 @@ function populateSOETable(filteredData) {
 
     filteredData.forEach((row, index) => {
         // Generate uniqueSearch based on the updated model logic
-        // const uniqueSearch = `${row.department_code}-${row.department_name}-${row.scheme_name}-${row.head_name}-${row.soe_name}`;
         const uniqueSearch = `${row.department_name}-${row.scheme_name}-${row.head_name}-${row.soe_name}`;
 
         const in_divisible = (row.in_divisible || 0).toFixed(2);
@@ -96,27 +92,27 @@ function populateSOETable(filteredData) {
         
         // Add a row with input fields for editing
         const newRow = soeTable.insertRow();
-        newRow.innerHTML = `
-        <td>${row.scheme_name}</td>
-        <td>${row.soe_name}</td>
-        <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
-        <td>${revisedEstimate}</td>
-        <td><input type="number" value="${in_divisible}" class="expandable-input" /></td>
-        <td>${divisible}</td>
-        <td><input type="number" value="${kinnaur}" class="expandable-input" /></td>
-        <td><input type="number" value="${lahaul}" class="expandable-input" /></td>
-        <td><input type="number" value="${spiti}" class="expandable-input" /></td>
-        <td><input type="number" value="${pangi}" class="expandable-input" /></td>
-        <td><input type="number" value="${bharmaur}" class="expandable-input" /></td>
-        <td>
-            <button class="btn btn-success" id="soeTable_Button" onclick="updateRevisedEstimate('${uniqueSearch}', this)">Update</button>
-        </td>
+        // Store the uniqueSearch as a data attribute for later retrieval
+        newRow.setAttribute('data-unique-search', uniqueSearch);
 
-    `;
+        newRow.innerHTML = `
+            <td>${row.scheme_name}</td>
+            <td>${row.soe_name}</td>
+            <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
+            <td>${revisedEstimate}</td>
+            <td><input type="number" value="${in_divisible}" class="expandable-input" /></td>
+            <td>${divisible}</td>
+            <td><input type="number" value="${kinnaur}" class="expandable-input" /></td>
+            <td><input type="number" value="${lahaul}" class="expandable-input" /></td>
+            <td><input type="number" value="${spiti}" class="expandable-input" /></td>
+            <td><input type="number" value="${pangi}" class="expandable-input" /></td>
+            <td><input type="number" value="${bharmaur}" class="expandable-input" /></td>
+            <td>
+                <button class="btn btn-success" onclick="updateRevisedEstimate('${uniqueSearch}', this)">Update</button>
+            </td>
+        `;
     });
 }
-
-
 
 // Update Revised Estimate for a single SOE
 function updateRevisedEstimate(uniqueSearch, button) {
@@ -129,13 +125,16 @@ function updateRevisedEstimate(uniqueSearch, button) {
     const bharmaur = parseFloat(row.cells[10].querySelector('input').value) || 0;
 
     // Calculate
-    const divisible = kinnaur + lahaul + spiti + pangi + bharmaur
-    const revisedEstimate = in_divisible + divisible
+    const divisible = kinnaur + lahaul + spiti + pangi + bharmaur;
+    const revisedEstimate = in_divisible + divisible;
 
     // Make the API call to update the revised estimate in the backend
     fetch('/update-revised-estimate/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        headers: { 
+            'Content-Type': 'application/json', 
+            'X-CSRFToken': getCookie('csrftoken') 
+        },
         body: JSON.stringify({
             uniqueSearch,  // Send the unique search key
             revisedEstimate,  // Send the updated revised estimate value
@@ -162,7 +161,7 @@ function updateRevisedEstimate(uniqueSearch, button) {
             // Update the Divisible cell in the SOE Details table
             row.cells[5].textContent = divisible.toFixed(2);
 
-
+            // Optionally, refresh the main table data
             fetchData();
         } else {
             inlineMessage.textContent = 'Error updating: ' + data.message;
@@ -176,6 +175,15 @@ function updateRevisedEstimate(uniqueSearch, button) {
         inlineMessage.style.color = 'red'; // Error message style
     });
 }
+
+
+
+
+
+
+
+
+
 
 
 // CSRF Token Helper
@@ -194,10 +202,35 @@ function getCookie(name) {
     return cookieValue;
 }
 
+
+
+
+
+
 // Load data automatically when the page is loaded
 window.onload = function() {
     fetchData();
 };
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Your other function definitions and initializations, e.g., fetchData(), populateSOETable(), etc.
+
+    // Event delegation for the Enter key on input fields in the SOE table
+    document.getElementById('soeTable').addEventListener('keydown', function(e) {
+        if (e.target && e.target.matches('input.expandable-input') && e.key === "Enter") {
+            const row = e.target.closest('tr');
+            const updateButton = row.querySelector("button");
+            if (updateButton) {
+                updateButton.click();
+            }
+        }
+    });
+});
+
+
+
 
 // Export table data to CSV
 function exportToCSV() {
