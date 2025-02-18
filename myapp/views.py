@@ -197,7 +197,7 @@ def add_data(request):
     soes = [
     "01-Salaries", "02-Wages", "03-Travel Expenses", "05-Office Expenses", "06-Medical Reimbursement", "07-Rent Rates and Taxes", "09-Advertising and Publicity", "10-Hospitality and Entertainment Expenses", 
     "12-Professional & Special Services", "15-Training", "16-Social Security Pension", "20-Other Charges", "21-Maintenance", "29-Compensations", "30-Motor Vehicles (Outsourced Vehicles/Pol/Repairs)", 
-    "31-Machinery and Equipment", "33-Materials and Supplies", "37-Major Works", "40-Scholarships Stipends and Concessions", "40-Scholarships- Stipends and Concessions", 
+    "31-Machinery and Equipment", "33-Materials and Supplies", "36-Minor Works", "37-Major Works", "40-Scholarships Stipends and Concessions", "40-Scholarships- Stipends and Concessions", 
     "41-Grants-in-Aid General (Salary)", "42-Grants-in-Aid General (Non-Salary)", "42-Grants-in-Aid General (Non-Salary) SDG New_add", "43-Investment", "44-Grants-in-Aid for Capital Assets", 
     "44-Grants-in-Aid for Capital Assets SDG New_add", "48-Loans", "62-Subsidy on Interests", "63-Subsidy", "64-Transfer Expenses", "65-Outsourcing Charges", "79-Suspense"]
 
