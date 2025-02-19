@@ -137,6 +137,7 @@ table td input {
     box-sizing: border-box;
 }
 
+
 /* Specific Styling for Scheme Name Column */
 #dataTable td:nth-child(3), /* Scheme Name Column */
 #dataTable th:nth-child(3) {

@@ -103,7 +103,7 @@ function populateSOETable(filteredData) {
             <td>${row.scheme_name}</td>
             <td>${row.soe_name}</td>
             <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
-            <td>${revisedEstimate}</td>
+            <td><strong>${revisedEstimate}</strong></td>
             <td><input type="number" value="${in_divisible}" class="expandable-input" /></td>
             <td>${divisible}</td>
             <td><input type="number" value="${kinnaur}" class="expandable-input" /></td>
