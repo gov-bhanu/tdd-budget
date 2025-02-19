@@ -37,7 +37,6 @@ def fetch_data(request):
 
 @csrf_exempt
 def update_revised_estimate(request):
-    """Update the revised estimate and set it as the new Sanctioned Budget in the database."""
     if request.method == 'POST':
         try:
             body = json.loads(request.body)

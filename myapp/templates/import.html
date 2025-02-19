@@ -13,9 +13,10 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center mb-4">Import CSV File</h1>
-        <a href="/" class="btn btn-success mb-4">Home</a>
         <div class="row justify-content-center mt-4">
             <div class="col-md-6">
+                <!-- Home -->
+                <a href="/" class="btn btn-warning mb-4">Home</a>
                 <!-- Form for uploading the CSV file -->
                 <form method="POST" action="{% url 'import_csv' %}" enctype="multipart/form-data">
                     {% csrf_token %}

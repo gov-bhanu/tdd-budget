@@ -24,6 +24,7 @@ function fetchData() {
 function populateMainTable() {
     const dataTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
     dataTable.innerHTML = ''; // Clear previous table content
+    allData.sort((a, b) => (a.head_name || '').localeCompare(b.head_name || '') || (a.soe_name || '').localeCompare(b.soe_name || ''));
     allData.forEach(row => {
         const newRow = dataTable.insertRow();
         newRow.innerHTML = `
@@ -72,6 +73,9 @@ function onHeadNameSelected() {
 
 // Populate the SOE table for updating revised estimate
 function populateSOETable(filteredData) {
+    // Sort the filtered data by soe_name in ascending order
+    filteredData.sort((a, b) => a.soe_name.localeCompare(b.soe_name));
+
     const soeTable = document.getElementById('soeTable').getElementsByTagName('tbody')[0];
     soeTable.innerHTML = '';  // Clear existing rows
 
@@ -113,6 +117,7 @@ function populateSOETable(filteredData) {
         `;
     });
 }
+
 
 // Update Revised Estimate for a single SOE
 function updateRevisedEstimate(uniqueSearch, button) {

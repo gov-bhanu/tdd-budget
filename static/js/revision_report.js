@@ -27,7 +27,7 @@ function populateRevisionReportTable(data) {
     revisionReportTableBody.innerHTML = ''; // Clear previous table content
 
     // Sort the data by `head_name`
-    data.sort((a, b) => (a.head_name || '').localeCompare(b.head_name || ''));
+    data.sort((a, b) => (a.head_name || '').localeCompare(b.head_name || '') || (a.soe_name || '').localeCompare(b.soe_name || ''));
 
     let headNamePrev = '';
     let departmentPrev = '';
