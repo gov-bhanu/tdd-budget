@@ -190,7 +190,7 @@ def add_data(request):
     "Dairy and Milk Supply", "Elementary Education", "Energy", "Excise and Taxation", "Fisheries", "Fire Services", "Forest", "General Administration", "Health and Family Welfare", 
     "Horticulture", "Hortriculture", "Industry and Minerals", "Irrigation and Flood Control", "Judiciary", "Labour and Employment", "Medical Education and Research", 
     "Mountaineering and Allied Sports", "Police Housing", "Planning Department", "Prison Department", "Public Works", "Rural Development", "Science Technology and Environment", 
-    "Secondary Education", "Special Nutrition Programme", "Social Welfare", "Town and Country Planning", "Transport","Tribal Development", "University and Higher Education", "Vigilance Department", "Water Supply", 
+    "Secondary Education", "Special Nutrition Programme", "Social Welfare", "Town and Country Planning", "Tourism","Transport","Tribal Development", "University and Higher Education", "Vigilance Department", "Water Supply", 
     "Water Supply and Sewerage", "Welfare of SCs/STs/OBCs", "Women and Child Development", "Youth Services and Sports"]
 
     soes = [
