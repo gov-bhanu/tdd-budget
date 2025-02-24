@@ -132,8 +132,8 @@ table td input {
 }
 
 /* Add specific styling for "In Divisible" column */
-#soeDetails table#soeTable th:nth-child(5), /* In Divisible */
-#soeDetails table#soeTable td:nth-child(5) input { /* In Divisible inputs */
+#soeDetails table#soeTable th:nth-child(6), /* In Divisible */
+#soeDetails table#soeTable td:nth-child(6) input { /* In Divisible inputs */
     width: 8em; /* Adjust as needed for input size */
     padding: 2px;
     font-size: 12px;
