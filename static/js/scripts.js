@@ -45,23 +45,29 @@ function populateMainTable() {
     });
 }
 
-// Populate the Head Name dropdown
+
+
+
+// Populate the Head Name datalist for suggestions
 function populateHeadNameDropdown() {
-    const headNameDropdown = document.getElementById('headNameDropdown');
+    const headNameInput = document.getElementById('headNameInput');
+    const datalist = document.getElementById('headNameSuggestions');
     const uniqueHeadNames = [...new Set(allData.map(row => row.head_name))];
     uniqueHeadNames.sort(); // Sort the head names in ascending order
-    headNameDropdown.innerHTML = '<option value="">--Select Head Name--</option>';
+
+    // Clear existing suggestions
+    datalist.innerHTML = '';
+
     uniqueHeadNames.forEach(headName => {
         const option = document.createElement('option');
         option.value = headName;
-        option.textContent = headName;
-        headNameDropdown.appendChild(option);
+        datalist.appendChild(option);
     });
 }
 
-// Handle Head Name selection
+// Handle Head Name selection from the input field with suggestions
 function onHeadNameSelected() {
-    const selectedHeadName = document.getElementById('headNameDropdown').value;
+    const selectedHeadName = document.getElementById('headNameInput').value.trim();
     if (!selectedHeadName) {
         document.getElementById('soeDetails').style.display = 'none';
         return;
@@ -100,6 +106,7 @@ function populateSOETable(filteredData) {
         newRow.setAttribute('data-unique-search', uniqueSearch);
 
         newRow.innerHTML = `
+            <td>${row.department_name}</td>
             <td>${row.scheme_name}</td>
             <td>${row.soe_name}</td>
             <td>${parseFloat(row.sanctioned_budget).toFixed(2)}</td>
@@ -118,20 +125,27 @@ function populateSOETable(filteredData) {
     });
 }
 
-
 // Update Revised Estimate for a single SOE
 function updateRevisedEstimate(uniqueSearch, button) {
     const row = button.parentElement.parentElement; // Get the row that contains the data
-    const in_divisible = parseFloat(row.cells[4].querySelector('input').value) || 0;
-    const kinnaur = parseFloat(row.cells[6].querySelector('input').value) || 0;
-    const lahaul = parseFloat(row.cells[7].querySelector('input').value) || 0;
-    const spiti = parseFloat(row.cells[8].querySelector('input').value) || 0;
-    const pangi = parseFloat(row.cells[9].querySelector('input').value) || 0;
-    const bharmaur = parseFloat(row.cells[10].querySelector('input').value) || 0;
 
-    // Calculate
+    // Updated cell indices after adding the department column:
+    // 0: Department, 1: Scheme, 2: SOE, 3: Sanctioned Budget, 4: Revised Estimate,
+    // 5: In Divisible, 6: Divisible, 7: Kinnaur, 8: Lahaul, 9: Spiti, 10: Pangi, 11: Bharmaur, 12: Action
+    const in_divisible = parseFloat(row.cells[5].querySelector('input').value) || 0;
+    const kinnaur = parseFloat(row.cells[7].querySelector('input').value) || 0;
+    const lahaul = parseFloat(row.cells[8].querySelector('input').value) || 0;
+    const spiti = parseFloat(row.cells[9].querySelector('input').value) || 0;
+    const pangi = parseFloat(row.cells[10].querySelector('input').value) || 0;
+    const bharmaur = parseFloat(row.cells[11].querySelector('input').value) || 0;
+
+    // Calculate totals
     const divisible = kinnaur + lahaul + spiti + pangi + bharmaur;
     const revisedEstimate = in_divisible + divisible;
+
+    // Preserve the currently selected Head Name
+    const headNameInput = document.getElementById('headNameInput');
+    const selectedHeadName = headNameInput.value.trim();
 
     // Make the API call to update the revised estimate in the backend
     fetch('/update-revised-estimate/', {
@@ -158,40 +172,37 @@ function updateRevisedEstimate(uniqueSearch, button) {
         inlineMessage.style.display = 'block';
         if (data.status === 'success') {
             inlineMessage.textContent = `Updated ${uniqueSearch} successfully!`;
-            inlineMessage.style.color = 'green'; // Success message style
+            inlineMessage.style.color = 'green';
 
-            // Update the Revised Estimate cell in the SOE Details table
-            row.cells[3].textContent = revisedEstimate.toFixed(2);
+            // Update the Revised Estimate cell in the SOE Details table (cell index 4)
+            row.cells[4].textContent = revisedEstimate.toFixed(2);
+            // Update the Divisible cell in the SOE Details table (cell index 6)
+            row.cells[6].textContent = divisible.toFixed(2);
 
-            // Update the Divisible cell in the SOE Details table
-            row.cells[5].textContent = divisible.toFixed(2);
-
-            // Optionally, refresh the main table data
+            // Refresh main table data
             fetchData();
+            // Delay reapplying the filter to ensure fetchData has finished
+            setTimeout(() => {
+                headNameInput.value = selectedHeadName;
+                onHeadNameSelected();
+            }, 500);
         } else {
             inlineMessage.textContent = 'Error updating: ' + data.message;
-            inlineMessage.style.color = 'red'; // Error message style
+            inlineMessage.style.color = 'red';
         }
     })
     .catch(error => {
         const inlineMessage = document.getElementById('inlineMessage');
         inlineMessage.style.display = 'block';
         inlineMessage.textContent = 'Error updating the estimate. Please try again later.';
-        inlineMessage.style.color = 'red'; // Error message style
+        inlineMessage.style.color = 'red';
     });
 }
 
+// Make updateRevisedEstimate globally accessible for inline event attributes
+window.updateRevisedEstimate = updateRevisedEstimate;
 
-
-
-
-
-
-
-
-
-
-// CSRF Token Helper
+// CSRF Token Helper (unchanged)
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -207,15 +218,13 @@ function getCookie(name) {
     return cookieValue;
 }
 
-
-
-
-
-
 // Load data automatically when the page is loaded
 window.onload = function() {
     fetchData();
 };
+
+
+
 
 
 

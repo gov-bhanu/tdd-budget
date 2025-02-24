@@ -99,19 +99,42 @@ table td input {
     color: red;
 }
 
-/* SOE Table Specific Styling */
-#soeDetails table#soeTable th:nth-child(7), /* Kinnaur */
-#soeDetails table#soeTable th:nth-child(8), /* Lahaul */
-#soeDetails table#soeTable th:nth-child(9), /* Spiti */
-#soeDetails table#soeTable th:nth-child(10), /* Pangi */
-#soeDetails table#soeTable th:nth-child(11) { /* Bharmaur */
-    width: 8em; /* Adjust column width */
+
+
+
+
+
+/* Force fixed table layout so column widths are enforced */
+#soeDetails table#soeTable {
+    width: 100%;
+}
+
+/* Adjust column width for 'Scheme Name' (2nd column) */
+#soeDetails table#soeTable th:nth-child(2),
+#soeDetails table#soeTable td:nth-child(2) {
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+
+
+
+
+
+
+/* SOE Table Specific Styling */  /* Adjust column width */
+#soeDetails table#soeTable th:nth-child(8), /* Kinnaur */
+#soeDetails table#soeTable th:nth-child(9), /* Lahaul */
+#soeDetails table#soeTable th:nth-child(10), /* Spiti */
+#soeDetails table#soeTable th:nth-child(11), /* Pangi */
+#soeDetails table#soeTable th:nth-child(12) { /* Bharmaur */
+    width: 8em;
 }
 
 /* Add specific styling for "In Divisible" column */
 #soeDetails table#soeTable th:nth-child(5), /* In Divisible */
 #soeDetails table#soeTable td:nth-child(5) input { /* In Divisible inputs */
-    width: 10em; /* Adjust as needed for input size */
+    width: 8em; /* Adjust as needed for input size */
     padding: 2px;
     font-size: 12px;
     box-sizing: border-box;

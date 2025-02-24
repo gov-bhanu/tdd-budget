@@ -14,6 +14,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 
     <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
@@ -44,15 +47,15 @@
 
     <a href="/admin/" class="btn btn-warning mb-4">Admin Page</a>
 
-        <!-- Dropdown Filter Section -->
+        <!-- Head Name Input Section with Suggestions -->
         <div class="form-group row">
-            <label for="headNameDropdown" class="col-sm-2 col-form-label">Select Head Name:</label>
+            <label for="headNameInput" class="col-sm-2 col-form-label">Select Head Name:</label>
             <div class="col-sm-10">
-                <select id="headNameDropdown" class="form-control" onchange="onHeadNameSelected()">
-                    <option value="">--Select Head Name--</option>
-                </select>
+                <input type="text" id="headNameInput" class="form-control" list="headNameSuggestions" onchange="onHeadNameSelected()" placeholder="Type to search..." />
+                <datalist id="headNameSuggestions"></datalist>
             </div>
         </div>
+
 
         <!-- SOE Details Section -->
         <div id="soeDetails" class="mb-4" style="display: none;">
@@ -60,6 +63,7 @@
             <table id="soeTable" class="table table-bordered">
                 <thead>
                     <tr>
+                        <th>Department Name</th>
                         <th>Scheme Name</th>
                         <th>SOEs Name</th>
                         <th>Sanctioned Budget</th>
